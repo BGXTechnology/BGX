@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project [
+    <!ENTITY project-init SYSTEM "../../project-init.xml">
+    <!ENTITY build-tasks SYSTEM "../../../../build/src/xml/build-tasks.xml">
+    <!ENTITY build-init SYSTEM "../../../../build/src/xml/build-init.xml">
+    <!ENTITY test-stub SYSTEM "../../../../build/src/xml/test-stub.xml">
+    <!ENTITY client-stub SYSTEM "../../../../build/src/xml/client-stub.xml">
+]>
+<project default="build" name="persistence">
+    <property name="module.name" value="persistence"/>
+
+    &project-init;
+    &build-init;
+    &build-tasks;
+    &test-stub;
+    &client-stub;
+
+    <target name="_init">
+        <check-and-set classpathRefName="dependencies">
+        </check-and-set>
+        <path id="classpath">
+            <path refid="dependencies"/>
+            <path refid="jboss-server"/>
+        </path>
+    </target>
+
+    <target name="packaging" depends="init">
+        <jar destfile="${deploy.dir}/${module.name}.jar">
+            <metainf dir="${resources.java}/META-INF">
+                <include name="persistence.xml"/>
+            </metainf>
+            <fileset dir="${classes.dir}">
+                <include name="${package.name}/**/*.xml"/>
+                <include name="${package.name}/**/*.properties"/>
+                <include name="${package.name}/**/*.class"/>
+            </fileset>
+        </jar>
+    </target>
+</project>

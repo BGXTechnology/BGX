@@ -1,0 +1,10 @@
+<persistence>
+  <persistence-unit name="business_manager">
+    <jta-data-source>java:/bgxnetworkDS_CORE</jta-data-source>
+    <properties>
+      <!--property name="hibernate.dialect" value="org.hibernate.dialect.MySQLInnoDBDialect"/-->
+      <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle9Dialect"/>
+      <property name="hibernate.hbm2ddl.auto" value="update"/>
+    </properties>
+  </persistence-unit>
+</persistence>

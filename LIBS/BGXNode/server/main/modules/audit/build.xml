@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project [
+        <!ENTITY project-init SYSTEM "../../project-init.xml">
+<!ENTITY build-tasks SYSTEM "../../../../build/src/xml/build-tasks.xml">
+<!ENTITY build-init SYSTEM "../../../../build/src/xml/build-init.xml">
+<!ENTITY test-stub SYSTEM "../../../../build/src/xml/test-stub.xml">
+<!ENTITY client-stub SYSTEM "../../../../build/src/xml/client-stub.xml">
+]>
+<project default="build" name="audit">
+	<property name="module.name" value="audit" />
+	
+	&project-init;
+	&build-init;
+	&build-tasks;
+	&client-stub;
+	&test-stub;
+	
+	
+	<target name="_init">
+		<echo message="INIT" />
+
+		<check-and-set classpathRefName="dependencies">
+			<property name="_setting.lib" value="${setting.module.dir}/deploy/setting.jar"/>
+			<property name="_persistence.lib" value="${persistence.module.dir}/deploy/persistence.jar" />
+			<property name="_toolkit.lib" value="${toolkit.module.dir}/deploy/toolkit.jar" />
+			<property name="_transfers.lib" value="${transfer.module.dir}/deploy/transfer.jar" />
+		</check-and-set>
+		<path id="classpath">
+			<path refid="dependencies" />
+			<path refid="jboss-server" />
+		</path>
+	</target>
+	<target name="packaging" depends="init" description="creates archives of service">
+
+		<jar destfile="${deploy.dir}/${module.name}.jar">
+			<fileset dir="${classes.dir}">
+				<include name="${package.name}/**/*.xml" />
+				<include name="${package.name}/**/*.properties" />
+				<include name="${package.name}/**/*.class" />				
+			</fileset>
+
+		</jar>
+		<!--jar destfile="${deploy.dir}/${module.name}.jar">
+			<fileset dir="${classes.dir}">
+				<include name="net/bgx/bgxnetwork/audit/drivenbean/*" />
+				<include name="net/bgx/bgxnetwork/audit/annotation/*" />
+				<include name="net/bgx/bgxnetwork/audit/strategy/*" />
+				<include name="net/bgx/bgxnetwork/audit/ejb/*" />
+				<include name="net/bgx/bgxnetwork/audit/interfaces/*" />
+			</fileset>
+		</jar-->
+	</target>
+
+</project>
