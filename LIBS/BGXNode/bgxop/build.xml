@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project [
+        <!ENTITY build-tasks SYSTEM "../build/src/xml/build-tasks.xml">
+        ]>
+<project default="build" name="build bgxop Client">
+    <property environment="env"/>
+    <property name="bgxnetwork.server.home.dir" value="${env.i9500_PROJECTS_HOME}/server"/>
+    <property name="bgxnetwork.bgxop.home.dir" value="${env.i9500_PROJECTS_HOME}/bgxop"/>
+    <property file="${bgxnetwork.bgxop.home.dir}/build.properties"/>
+    <property name="ext.lib.dir" value="${env.i9500_PROJECTS_HOME}/lib" />
+
+    <property name="project.deploy.dir" value="${bgxnetwork.bgxop.home.dir}/deploy"/>
+    <property name="jws" value="../jws"/>
+    <property name="keyStore" value="${jws}/dxKeystore"/>
+    <property name="alias" value="qlKey"/>
+    <property name="storepass" value="bgxnetwork"/>
+
+    &build-tasks;
+
+    <target name="makelog">
+        <record name="build.log"/>
+        <log text="Building started"/>
+    </target>
+
+    <target name="init" depends="makelog">
+        <mkdir dir="${project.deploy.dir}/lib"/>
+        <delete>
+            <fileset dir="${project.deploy.dir}" includes="**/*"/>
+        </delete>
+        <mkdir dir="${bgxnetwork.bgxop.home.dir}/build"/>
+        <delete>
+            <fileset dir="${bgxnetwork.bgxop.home.dir}/build" includes="**/*"/>
+        </delete>
+    </target>
+
+    <target name="build.modules">
+        <log text="Building bgxop modules [${build.target}]"/>
+	<build module="net" target="${build.target}"/>
+    	<build module="tools" target="${build.target}"/>
+        <build module="jungviewer" target="${build.target}"/>
+        <build module="uitools" target="${build.target}"/>
+        <build module="wizard" target="${build.target}"/>
+        <build module="gui" target="${build.target}"/>
+    </target>
+
+    <target name="clean" depends="init" description="cleanup">
+        <antcall target="build.modules">
+            <param name="build.target" value="clean"/>
+        </antcall>
+    </target>
+
+    <target name="dirty-build" description="builds client and server packages without cleaning (much faster)">
+        <antcall target="build" inheritAll="yes">
+            <param name="skip_cleaning" value="yes"/>
+        </antcall>
+    </target>
+
+    <target name="package.config">
+        <jar destfile="${deploy.dir}/lib/config.jar">
+            <zipfileset dir="config">
+                <include name="*.*"/>
+            </zipfileset>
+        </jar>
+    </target>
+
+    <target name="build" depends="init" description="builds all server components">
+        <antcall target="build.modules">
+            <param name="build.target" value="build"/>
+        </antcall>
+
+        <copy todir="${client.lib.dir}">
+            <fileset file="${net.module.dir}/deploy/net.jar"/>
+        </copy>
+
+        <jar destfile="${project.deploy.dir}/lib/config.jar">
+            <fileset dir="config-${suffix}">
+                <include name="*.*"/>
+            </fileset>
+
+            <fileset dir="config">
+                <include name="*.*"/>
+            </fileset>
+        </jar>
+
+        <copy todir="${project.deploy.dir}">
+            <fileset file="${gui.module.dir}/deploy/gui.jar"/>
+            <fileset file="${wizard.module.dir}/deploy/wizard.jar"/>
+        </copy>
+
+        <copy todir="${project.deploy.dir}/lib">
+            <fileset dir="${jungviewer.module.dir}/deploy"/>
+            <fileset dir="${tools.module.dir}/deploy"/>
+            <fileset dir="${uitools.module.dir}/deploy"/>
+            <fileset dir="${client.lib.dir}">
+                <include name="client-security.jar"/>
+                <include name="client-query.jar"/>
+                <include name="client-auditmanager.jar"/>
+                <include name="transfer.jar"/>
+            	<include name="toolkit.jar"/>
+                <include name="persistence.jar"/>
+                <include name="net.jar"/>
+            </fileset>
+            <fileset dir="${ext.lib.dir}/jboss"/>
+            <fileset dir="${ext.lib.dir}/jung"/>
+            <fileset dir="${ext.lib.dir}/spatial"/>
+            <fileset file="${ext.lib.dir}/colt.jar"/>
+            <fileset file="${ext.lib.dir}/commons-collections-3.1.jar"/>
+        	<fileset file="${ext.lib.dir}/oracle-client.jar"/>
+            <fileset dir="${wizard.module.dir}/deploy"/>
+        </copy>
+
+        <log text="Building server components finished"/>
+    </target>
+
+    <target name="javadoc" depends="init" description="generates javadoc for all modules">
+        <antcall target="build.modules">
+            <param name="build.target" value="javadoc"/>
+        </antcall>
+    </target>
+
+    <!-- ================= JWS =========== -->
+    <target name="cert">
+        <echo message="Certificate"/>
+        <signjar jar="${project.deploy.dir}/gui.jar" keystore="${keyStore}" alias="${alias}" storepass="${storepass}"/>
+        <signjar keystore="${keyStore}" alias="${alias}" storepass="${storepass}">
+            <fileset dir="${project.deploy.dir}/lib/" includes="**/*.jar"/>
+        </signjar>
+    </target>
+
+    <target name="jws.packaging" depends="cert">
+        <!--echo message="Packaging war-file" /-->
+        <jar destfile="${bgxnetwork.bgxop.home.dir}/build/qlbgxopClient.war">
+            <zipfileset dir="${project.deploy.dir}">
+                <include name="**/*.jar"/>
+            </zipfileset>
+            <zipfileset dir="${jws}" prefix="WEB-INF">
+                <include name="web.xml"/>
+            </zipfileset>
+            <zipfileset dir="${jws}" prefix="WEB-INF/lib">
+                <include name="*.jar"/>
+            </zipfileset>
+            <zipfileset dir="${jws}">
+                <include name="*.html"/>
+            </zipfileset>
+            <zipfileset dir="${jws}">
+                <include name="qlbgxopClient.jnlp"/>
+            </zipfileset>
+        </jar>
+    </target>
+</project>
