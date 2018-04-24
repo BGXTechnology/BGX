@@ -1,0 +1,9 @@
+<taskdef name="log"
+    classpath="${env.i9500_PROJECTS_HOME}/build/deploy/build.jar"
+    classname="net.bgx.build.EventLogger"/>
+<taskdef name="check-and-set"
+    classpath="${env.i9500_PROJECTS_HOME}/build/deploy/build.jar"
+    classname="net.bgx.build.DependencyChecker"/>
+<taskdef name="build"
+    classpath="${env.i9500_PROJECTS_HOME}/build/deploy/build.jar"
+    classname="net.bgx.build.ModuleBuilder"/>

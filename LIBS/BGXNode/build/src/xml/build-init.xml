@@ -1,0 +1,118 @@
+<!--property environment="env"/>
+<property file="${env.i9500_PROJECTS_HOME}server/main/build.properties"/-->
+<property file="local-build.properties"/>
+<property name="classes.dir" value="classes"/>
+<property name="java.src" value="src/java"/>
+<property name="test.src" value="src/test"/>
+<property name="deploy.dir" value="deploy"/>
+<property name="docs.dir" value="docs"/>
+<property name="resources" value="src/resources"/>
+<property name="resources.java" value="src/resources/java"/>
+<property name="resources.test" value="src/resources/test"/>
+<property name="ext.lib.dir" value="${env.i9500_PROJECTS_HOME}/lib" />
+
+<target name="makelog">
+    <fail unless="module.name">'module.name' is not defined</fail>
+    <record name="build.log"/>
+    <log text="Building of module '${module.name}' started"/>
+</target>
+
+<target name="init" depends="makelog,_init">
+    <mkdir dir="${classes.dir}"/>
+    <mkdir dir="${deploy.dir}"/>
+</target>
+
+<target name="init.test" depends="init,_init.test"/>
+
+<path id="jdbc">
+    <fileset dir="${project.lib.dir}/jdbc">
+        <include name="*.jar"/>
+    </fileset>
+</path>
+
+<path id="jibx">
+    <fileset dir="${ext.lib.dir}/jibx">
+        <include name="*.jar"/>
+    </fileset>
+</path>
+
+<path id="jboss-client">
+    <fileset dir="${env.JBOSS_HOME}/client">
+        <include name="*.jar"/>
+    </fileset>
+</path>
+
+<path id="jboss-server">
+    <fileset dir="${env.JBOSS_HOME}/server/all/lib">
+        <include name="jboss-j2ee.jar"/>
+        <include name="jboss.jar"/>
+        <include name="javax.servlet.jar"/>
+        <include name="jbosssx.jar"/>
+        <include name="sheduler-plugin.jar"/>
+        <include name="log4j.jar"/>
+    </fileset>
+    <fileset dir="${env.JBOSS_HOME}/lib">
+        <include name="jboss-system.jar"/>
+        <include name="jboss-jmx.jar"/>
+    </fileset>
+      <fileset dir="${env.JBOSS_HOME}/server/all/deploy/ejb3.deployer">
+         <include name="*.jar"/>
+      </fileset>
+      <fileset dir="${env.JBOSS_HOME}/server/all/deploy/jboss-aop-jdk50.deployer">
+         <include name="*.jar"/>
+      </fileset>
+    <fileset dir="${env.JBOSS_HOME}/server/all/lib">
+            <include name="*.jar"/>
+      </fileset>
+</path>
+
+<target name="compile" depends="init">
+    <javac destdir="${classes.dir}" source="1.5" compiler="javac1.5" target="1.5" debug="true" encoding="Cp1251" debuglevel="lines,vars,source">
+        <classpath refid="classpath"/>
+        <src path="${java.src}"/>
+    </javac>
+    <copy todir="${classes.dir}">
+        <fileset dir="${java.src}" excludes="**/*.java"/>
+    </copy>
+</target>
+
+<target name="compile.test" depends="init.test,compile">
+    <javac destdir="${classes.dir}" source="1.5" compiler="javac1.5" target="1.5" debug="true" debuglevel="lines,vars,source">
+        <classpath refid="classpath.test"/>
+        <src path="${test.src}"/>
+    </javac>
+    <copy todir="${classes.dir}">
+        <fileset dir="${test.src}" includes="**/*.properties"/>
+        <fileset dir="${test.src}" includes="**/*.xml"/>
+        <fileset dir="${java.src}" includes="**/*.txt"/>
+    </copy>
+</target>
+
+<target name="clean" description="remove all files derived from sources" unless="skip_cleaning">
+    <delete>
+        <fileset dir="${classes.dir}" includes="**/*"/>
+        <fileset dir="${deploy.dir}" includes="**/*"/>
+    </delete>
+</target>
+
+<target name="javadoc" depends="init" description="builds javadoc API">
+    <delete dir="${docs.dir}/api"/>
+    <mkdir dir="${docs.dir}/api"/>
+    <javadoc source="1.5" destdir="${docs.dir}/api" packagenames="net.bgx.bgxnetwork.*"
+        windowtitle="ePuzzle ${module.name} API"
+        doctitle="eTest ${module.name} API">
+        <classpath refid="classpath"/>
+        <sourcepath location="${java.src}"/>
+    </javadoc>
+    <echo>
+        You can safely ignore warnings related to unknown tags.
+    </echo>
+</target>
+
+<target name="build" depends="init,clean,compile,packaging,packaging.client" description="builds client and server packages"/>
+<target name="build.test" depends="init.test,compile.test,packaging.test" description="builds test package"/>
+<target name="dirty-build" description="builds client and server packages without cleaning (much faster)">
+    <antcall target="build" inheritAll="yes">
+        <param name="skip_cleaning" value="yes"/>
+    </antcall>
+</target>

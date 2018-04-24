@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="build" name="bgxnetwork build system">
+    <property environment="env"/>
+    <property file="${env.i9500_PROJECTS_HOME}/server/main/build.properties"/>
+    <property name="classes.dir" value="classes"/>
+    <property name="java.src" value="src/java"/>
+    <property name="test.src" value="src/test"/>
+    <property name="deploy.dir" value="deploy"/>
+    <property name="docs.dir" value="docs"/>
+    <property name="module.name" value="build"/>
+
+    <path id="classpath">
+        <fileset dir="${env.ANT_HOME}/lib">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="init">
+        <fail unless="env.ANT_HOME">
+            *** DEPENDENCY CHECKING FAILED ***
+            - ANT_HOME should point on apache-ant installation
+        </fail>
+        <record name="build.log"/>
+        <mkdir dir="${classes.dir}"/>
+        <mkdir dir="${deploy.dir}"/>
+    </target>
+
+     <target name="compile" depends="init">
+        <javac destdir="${classes.dir}" encoding="Cp1251" source="1.4" compiler="javac1.4" target="1.4" debug="true" debuglevel="lines,vars,source" >
+            <classpath refid="classpath"/>
+            <src path="${java.src}"/>
+        </javac>
+        <copy todir="${classes.dir}">
+            <fileset dir="${java.src}" includes="**/*.properties"/>
+            <fileset dir="${java.src}" includes="**/*.xml"/>
+        </copy>
+    </target>
+
+    <target name="packaging" depends="init" description="creates archives of service">
+        <jar destfile="${deploy.dir}/${module.name}.jar">
+            <fileset dir="${classes.dir}">
+                <include name="**/*.class"/>
+            </fileset>
+        </jar>
+    </target>
+
+    <target name="build" depends="init,compile,packaging" description="builds service's package"/>
+</project>

@@ -1,0 +1,3 @@
+<target name="packaging.client" depends="init">
+    <echo>module '${module.name}' does not produces client package</echo>
+</target>

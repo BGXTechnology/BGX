@@ -1,0 +1,10 @@
+<target name="_init.test">
+    <path id="classpath.test">
+        <path refid="classpath"/>
+        <pathelement location="${project.lib.dir}/junit.jar"/>
+    </path>
+</target>
+
+<target name="packaging.test" depends="init">
+    <echo>module '${module.name}' does not produces test package</echo>
+</target>
