@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" codebase="$$codebase">
+    <information>
+        <title>LP Visualizator: Client place of the operator</title>
+        <vendor>Copyright 2007 bgx Software</vendor>
+    </information>
+    <security>
+        <all-permissions/>
+    </security>
+    <resources>
+        <j2se version="1.4+" initial-heap-size="64m" max-heap-size="256m"/>
+
+        <jar href="gui.jar" main="true"/>
+
+	<jar href="/qlbgxopClient/lib/wizard.jar"/>
+        <jar href="/qlbgxopClient/lib/jungviewer.jar"/>
+        <jar href="/qlbgxopClient/lib/tools.jar"/>
+        <jar href="/qlbgxopClient/lib/uitools.jar"/>
+        <jar href="/qlbgxopClient/lib/config.jar"/>
+        <jar href="/qlbgxopClient/lib/client-security.jar"/>
+        <jar href="/qlbgxopClient/lib/client-auditmanager.jar"/>
+        <jar href="/qlbgxopClient/lib/client-query.jar"/>
+        <jar href="/qlbgxopClient/lib/transfer.jar"/>
+        <jar href="/qlbgxopClient/lib/toolkit.jar"/>
+        <jar href="/qlbgxopClient/lib/persistence.jar"/>
+        <jar href="/qlbgxopClient/lib/net.jar"/>
+
+        <jar href="/qlbgxopClient/lib/jbossall-client.jar"/>
+        <jar href="/qlbgxopClient/lib/jboss-aspect-library-jdk50.jar"/>
+        <jar href="/qlbgxopClient/lib/jboss-aop-jdk50.jar"/>
+        <jar href="/qlbgxopClient/lib/hibernate3.jar"/>
+        <jar href="/qlbgxopClient/lib/jboss-ejb3.jar"/>
+        <jar href="/qlbgxopClient/lib/jboss-ejb3x.jar"/>
+
+        <jar href="/qlbgxopClient/lib/jung-1.7.6.jar"/>
+        <jar href="/qlbgxopClient/lib/sdonm.jar"/>
+        <jar href="/qlbgxopClient/lib/sdoapi.jar"/>
+        <jar href="/qlbgxopClient/lib/sdoutl.jar"/>
+        <jar href="/qlbgxopClient/lib/colt.jar"/>
+        <jar href="/qlbgxopClient/lib/commons-collections-3.1.jar"/>
+        <jar href="/qlbgxopClient/lib/oracle-client.jar"/>
+    </resources>
+    <application-desc main-class="net.bgx.bgxnetwork.bgxop.Application"/>
+</jnlp>
+
