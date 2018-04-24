@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project [
+        <!ENTITY project-init SYSTEM "../../../project-init.xml">
+        <!ENTITY build-tasks SYSTEM "../../../../build/src/xml/build-tasks.xml">
+        <!ENTITY build-init SYSTEM "../../../../build/src/xml/build-init.xml">
+        <!ENTITY test-stub SYSTEM "../../../../build/src/xml/test-stub.xml">
+        <!ENTITY client-stub SYSTEM "../../../../build/src/xml/client-stub.xml">
+        ]>
+<project default="build" name="tools">
+    <property name="module.name" value="tools"/>
+
+    &project-init;
+    &build-init;
+    &build-tasks;
+    &test-stub;
+    &client-stub;
+
+    <target name="_init">
+        <check-and-set classpathRefName="dependencies">
+            <!--property name="_toolkit.lib" value="${toolkit.module.dir}/deploy/toolkit.jar"/>
+            <property name="_net.lib" value="${net.module.dir}/deploy/net.jar"/-->
+        </check-and-set>
+        <path id="classpath">
+            <path refid="dependencies"/>
+            <path refid="jboss-server"/>
+            <fileset dir="${ext.lib.dir}/jung">
+                <include name="*.jar"/>
+            </fileset>
+            <fileset dir="${ext.lib.dir}/spatial">
+                <include name="*.jar"/>
+            </fileset>
+            <fileset dir="${client.lib.dir}">
+                <include name="*.jar"/>
+            </fileset>
+        </path>
+    </target>
+
+    <target name="packaging" depends="init">
+        <jar destfile="${deploy.dir}/${module.name}.jar">
+            <fileset dir="${classes.dir}">
+                <include name="**/*.*"/>
+            </fileset>
+        </jar>
+    </target>
+</project>
