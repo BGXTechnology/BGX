@@ -1,0 +1,56 @@
+How to build bgxnetwork system
+=========================================
+
+This document describes the necessary components and the process of building the bgxnetwork project
+
+The project build system uses:
+1. Apache Ant (http://ant.apache.org/)
+Ant comes in the form of a zip archive. It must be unzipped to any place.
+
+2. JBoss. Formally, only the libraries that are part of JBOSS are needed for the assembly.
+Jboss comes in the form of a zip archive. It must be unzipped to any place.
+
+3. JDK (http://java.sun.com). JDK is supplied as an installer.
+
+Install the above applications and products before continuing.
+
+
+Building (Build)
+--------------
+
+To get started, you need to get the source code of the project from the perfor- mance:
+server: docs.bgx.ai:1666
+path: // depot / External Projects / i9500 / Implementation / Source /
+
+A further description assumes that the source code has already been received.
+
+1. Edit the environment variables.
+
+\ depot \ External Projects \ i9500 \ Implementation \ Source \ build-alpha-6.bat
+
+
+Attention!!!
+the environment variable JIBX_LIB must not contain a space in the path
+Therefore, after getting the code from perforce, you need to copy
+catalog
+\ depot \ External Projects \ i9500 \ Implementation \ Source \ lib \ jibx \
+to disk in the directory, the path to the person does not contain a space
+and this is the path specified in the variable JIBX_LIB
+
+eg:
+
+JIBX_LIB = D: \ jibx \ lib \
+
+
+2. Building (build)
+To build, run the .bat file
+The last line of the file determines which of the assemblies is started by alpha or devel
+
+ant alpha - to build a project with a server configuration on port 8080
+ant devel - to build a project with a server configuration on port 8585
+
+Deployment
+-----------------------
+1. Stop the JBoss server
+2. Put the contents of the folder D: \ depot \ MNS \ bgxnetwork-2.1 ??\ deploy-alpha in the folder server + \ server \ QL \ QL \
+3. Run the JBoss server

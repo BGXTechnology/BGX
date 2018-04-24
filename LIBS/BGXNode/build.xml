@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project [
+        <!ENTITY build-tasks SYSTEM "build/src/xml/build-tasks.xml">
+        ]>
+<project name="QL" basedir="." default="all">
+    <property environment="env"/>
+
+    <property name="ext.lib.dir" value="${env.i9500_PROJECTS_HOME}/lib" />
+    <property name="qlink.deploy.dir" value="${env.i9500_PROJECTS_HOME}/deploy"/>
+    <property name="bgxnetwork.server.home.dir" value="${env.i9500_PROJECTS_HOME}/server"/>
+    <property name="bgxnetwork.bgxop.home.dir" value="${env.i9500_PROJECTS_HOME}/bgxop"/>
+
+    <property name="suffix" value="devel"/>
+
+    <ant antfile="${env.i9500_PROJECTS_HOME}/build/build.xml" dir="${env.i9500_PROJECTS_HOME}/build/"/>
+
+    &build-tasks;
+
+    <target name="makelog">
+        <record name="build.log"/>
+        <log text="${suffix} Building started"/>
+    </target>
+
+    <target name="init" depends="makelog">
+        <mkdir dir="${qlink.deploy.dir}-${suffix}"/>
+        <delete>
+            <fileset dir="${qlink.deploy.dir}-${suffix}" includes="**/*"/>
+        </delete>
+    </target>
+
+    <target name="build">
+        <ant antfile="${bgxnetwork.server.home.dir}/main/build.xml" dir="${bgxnetwork.server.home.dir}/main/"/>
+        <ant antfile="${bgxnetwork.bgxop.home.dir}/build.xml" dir="${bgxnetwork.bgxop.home.dir}/"/>
+    </target>
+
+    <target name="packaging">
+        <ant antfile="${bgxnetwork.bgxop.home.dir}/build.xml"
+             target="jws.packaging" dir="${bgxnetwork.bgxop.home.dir}"/>
+
+        <copy todir="${qlink.deploy.dir}-${suffix}">
+            <fileset dir="${bgxnetwork.server.home.dir}/deploy">
+                <include name="**/*.*"/>
+            </fileset>
+        </copy>
+
+        <copy todir="${qlink.deploy.dir}-${suffix}/deploy">
+            <fileset dir="${bgxnetwork.bgxop.home.dir}/build"/>
+        </copy>
+
+        <copy todir="${qlink.deploy.dir}-${suffix}/lib">
+            <fileset dir="${bgxnetwork.server.home.dir}/deploy/lib">
+                <include name="**.*"/>
+            </fileset>
+            <fileset dir="${ext.lib.dir}/spatial"/>
+            <fileset file="${ext.lib.dir}/oracle-client.jar"/>
+        </copy>
+    </target>
+
+    <target name="devel">
+	<antcall target="all" inheritAll="true">
+		<param name="suffix" value="devel"/>
+	</antcall>
+    </target>
+
+    <target name="alpha">
+	<antcall target="all" inheritAll="true">
+		<param name="suffix" value="alpha"/>
+	</antcall>
+    </target>
+
+    <target name="all" depends="init, build, packaging"/>
+    
+
+</project>
