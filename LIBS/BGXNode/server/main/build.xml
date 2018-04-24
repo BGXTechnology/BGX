@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project [
+        <!ENTITY build-tasks SYSTEM "../../build/src/xml/build-tasks.xml">
+        ]>
+<project default="build" name="build bgxnetwork server">
+	<property environment="env" />
+	<property file="${env.i9500_PROJECTS_HOME}/server/main/build.properties" />
+	<property file="resources/java/build.properties" />
+
+	<property name="project.deploy.dir" value="../deploy" />
+	<property name="resources.ear" value="resources/java/META-INF" />
+	<property name="resources.web" value="resources/java/web-root" />
+	<property name="archive.name" value="bgxnetwork" />
+	<property name="project.name" value="bgxnetwork" />
+
+    &build-tasks;
+
+    <target name="makelog">
+		<record name="build.log" />
+		<log text="Building started" />
+	</target>
+
+	<target name="init" depends="makelog">
+		<mkdir dir="${project.deploy.dir}/deploy" />
+		<mkdir dir="${project.deploy.dir}/lib" />
+		<mkdir dir="${client.lib.dir}" />
+		<delete>
+			<fileset dir="${project.deploy.dir}" includes="**/*" />
+			<fileset dir="${client.lib.dir}" includes="**/*" />
+		</delete>
+	</target>
+
+	<target name="build.modules">
+		<log text="Building server modules [${build.target}]" />
+		<build module="setting-${suffix}" target="${build.target}" />
+		<build module="persistence" target="${build.target}" />
+		<build module="toolkit" target="${build.target}" />
+		<build module="transfer" target="${build.target}" />
+		<build module="audit" target="${build.target}" />
+		<build module="security" target="${build.target}" />
+		<build module="meta" target="${build.target}" />
+		<build module="auditmanager" target="${build.target}" />
+	        <build module="dbmanager" target="${build.target}" />
+		<build module="query" target="${build.target}" />
+		<build module="admin" target="${build.target}" />
+
+	</target>
+
+	<target name="clean" depends="init" description="cleanup">
+		<antcall target="build.modules">
+            <param name="suffix" value="alpha" />
+			<param name="build.target" value="clean" />
+		</antcall>
+	</target>
+
+	<target name="dirty-build" description="builds client and server packages without cleaning (much faster)">
+		<antcall target="build" inheritAll="yes">
+			<param name="skip_cleaning" value="yes" />
+		</antcall>
+	</target>
+
+	<target name="build.alpha">
+		<antcall target="build" inheritAll="yes">
+			<param name="suffix" value="alpha" />
+		</antcall>
+	</target>
+
+	<target name="build.devel">
+		<property name="suffix" value="devel" />
+		<antcall target="build" inheritAll="yes" />
+	</target>
+
+	<target name="build" depends="init" description="builds all server components">
+		<antcall target="build.modules">
+			<param name="build.target" value="build" />
+		</antcall>
+
+		<antcall target="copy.client.lib" />
+
+		<ear appxml="${resources.ear}/application.xml" destfile="${project.deploy.dir}/deploy/${archive.name}.ear">
+			<fileset file="${persistence.module.dir}/deploy/persistence.jar" />
+			<fileset file="${toolkit.module.dir}/deploy/system.jar" />
+			<fileset file="${security.module.dir}/deploy/security.jar" />
+			<fileset file="${admin.module.dir}/deploy/admin.jar" />
+			<fileset file="${auditmanager.module.dir}/deploy/auditmanager.jar" />
+			<fileset file="${query.module.dir}/deploy/query.jar" />
+			<fileset file="${project.deploy.dir}/deploy/${archive.name}.war" />
+			<fileset file="${audit.module.dir}/deploy/audit.aop" />
+			<fileset file="${audit.module.dir}/deploy/audit.jar" />
+		        <fileset file="${dbmanager.module.dir}/deploy/dbmanager.jar" />
+			<fileset file="${query.module.dir}/deploy/query-collector.sar" />
+			<fileset file="${meta.module.dir}/deploy/meta.jar" />
+		</ear>
+
+		<copy todir="${project.deploy.dir}/lib">
+			<fileset file="${toolkit.module.dir}/deploy/toolkit.jar" />
+			<fileset file="${transfer.module.dir}/deploy/transfer.jar" />
+		</copy>
+
+		<log text="Building server components finished" />
+	</target>
+
+	<target name="javadoc" depends="init" description="generates javadoc for all modules">
+		<antcall target="build.modules">
+			<param name="build.target" value="javadoc" />
+		</antcall>
+	</target>
+
+	<target name="copy.client.lib" description="copy libraries for GUI client ">
+		<copy todir="${client.lib.dir}">
+			<fileset file="${persistence.module.dir}/deploy/persistence.jar" />
+			<fileset file="${transfer.module.dir}/deploy/transfer.jar" />
+			<fileset file="${toolkit.module.dir}/deploy/toolkit.jar" />
+			<fileset file="${security.module.dir}/deploy/client-security.jar" />
+			<fileset file="${admin.module.dir}/deploy/client-admin.jar" />
+			<fileset file="${query.module.dir}/deploy/client-query.jar" />
+			<fileset file="${auditmanager.module.dir}/deploy/client-auditmanager.jar" />
+		</copy>
+	</target>
+</project>

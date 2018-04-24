@@ -1,0 +1,2 @@
+<property environment="env"/>
+<property file="${env.i9500_PROJECTS_HOME}/server/main/build.properties"/>

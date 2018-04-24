@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project [
+        <!ENTITY project-init SYSTEM "../project-init.xml">
+        <!ENTITY build-tasks SYSTEM "../../../build/src/xml/build-tasks.xml">
+        <!ENTITY build-init SYSTEM "../../../build/src/xml/build-init.xml">
+        <!ENTITY test-stub SYSTEM "../../../build/src/xml/test-stub.xml">
+        <!ENTITY client-stub SYSTEM "../../../build/src/xml/client-stub.xml">
+        ]>
+<project default="build" name="smart system setting">
+    <property name="module.name" value="setting-alpha"/>
+
+    &project-init;
+    &build-init;
+    &build-tasks;
+    &client-stub;
+    &test-stub;
+
+    <target name="_init">
+        <path id="classpath">
+            <path refid="jboss-server"/>
+        </path>
+    </target>
+
+    <target name="packaging" depends="init">
+        <jar destfile="${deploy.dir}/setting.jar">
+            <fileset dir="${classes.dir}">
+                <include name="${package.name}/**/*.xml"/>
+                <include name="${package.name}/**/*.properties"/>
+                <include name="${package.name}/**/*.class"/>
+            </fileset>
+        </jar>
+	
+	<copyfile src="${deploy.dir}/setting.jar" dest="${setting.module.dir}/deploy/setting.jar"/>
+    </target>
+</project>

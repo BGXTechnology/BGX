@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE application PUBLIC "-//Sun Microsystems, Inc.//DTD J2EE Application 1.3//EN" "http://java.sun.com/dtd/application_1_3.dtd">
+
+<application>
+    <display-name>Test server</display-name>
+
+
+    <module>
+        <ejb>system.jar</ejb>
+    </module>
+    <module>
+        <ejb>query.jar</ejb>
+    </module>
+    <module>
+        <ejb>persistence.jar</ejb>
+    </module>
+    <module>
+        <ejb>security.jar</ejb>
+    </module>
+    <module>
+        <ejb>admin.jar</ejb>
+    </module>
+    <module>
+        <ejb>audit.jar</ejb>
+    </module>
+     <module>
+        <ejb>auditmanager.jar</ejb>
+    </module>
+     <module>
+        <ejb>dbmanager.jar</ejb>
+    </module>
+    <module>
+        <connector>query-collector.sar</connector>
+    </module>
+     <module>
+        <ejb>meta.jar</ejb>
+    </module>
+
+</application>

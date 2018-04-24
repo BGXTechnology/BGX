@@ -1,0 +1,30 @@
+<?xml version='1.0'?>
+<!DOCTYPE policy PUBLIC
+      "-//JBoss//DTD JBOSS Security Config 3.0//EN"
+      "http://www.jboss.org/j2ee/dtd/security_config.dtd">
+
+<policy>
+    <application-policy name = "bgxnetwork-domain">
+       <authentication>
+          <login-module code="net.bgx.bgxnetwork.security.auth.server.LanVisualizatorLoginModule"
+                    flag="sufficient">
+                <module-option name="dsJndiName">java:/bgxnetworkDS_CORE</module-option>
+                <module-option name="principalsQuery">
+                    select password from account where login=?
+                </module-option>
+                <module-option name="rolesQuery">
+                    select role.name, 'Roles' from account, account_group, role_group, role_role_group, role
+                      where
+                         account.login = ? and
+                         account.id = account_group.acc_id and
+                         account_group.group_id = role_group.id and
+                         role_group.id = role_role_group.group_id and
+                         role_role_group.role_id = role.id
+                </module-option>
+                <module-option name="hashAlgorithm">MD5</module-option>
+                <module-option name="hashEncoding">base64</module-option>
+          </login-module>
+       </authentication>
+    </application-policy>
+</policy>
+
