@@ -1,0 +1,1 @@
+Test of BGX Node without Ethereum Connection
