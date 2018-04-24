@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project [
+        <!ENTITY project-init SYSTEM "../../../project-init.xml">
+        <!ENTITY build-tasks SYSTEM "../../../../build/src/xml/build-tasks.xml">
+        <!ENTITY build-init SYSTEM "../../../../build/src/xml/build-init.xml">
+        <!ENTITY test-stub SYSTEM "../../../../build/src/xml/test-stub.xml">
+        <!ENTITY client-stub SYSTEM "../../../../build/src/xml/client-stub.xml">
+        ]>
+<project default="build" name="gui">
+    <property name="module.name" value="gui"/>
+
+    &project-init;
+    &build-init;
+    &build-tasks;
+    &test-stub;
+    &client-stub;
+
+    <target name="_init">
+        <check-and-set classpathRefName="dependencies">
+            <property name="_tools.lib" value="${tools.module.dir}/deploy/tools.jar"/>
+            <property name="_uitools.lib" value="${uitools.module.dir}/deploy/uitools.jar"/>
+            <property name="_jungviewer.lib" value="${jungviewer.module.dir}/deploy/jungviewer.jar"/>
+            <!--property name="_toolkit.lib" value="${toolkit.module.dir}/deploy/toolkit.jar"/ -->
+            <property name="_net.lib" value="${net.module.dir}/deploy/net.jar"/>
+            <property name="_wizard.lib" value="${wizard.module.dir}/deploy/wizard.jar"/>
+        </check-and-set>
+        <path id="classpath">
+            <path refid="dependencies"/>
+            <path refid="jboss-server"/>
+            <fileset dir="${ext.lib.dir}/jung">
+                <include name="*.jar"/>
+            </fileset>
+            <fileset dir="${ext.lib.dir}/spatial">
+                <include name="*.jar"/>
+            </fileset>
+            <fileset dir="${client.lib.dir}">
+                <include name="*.jar"/>
+            </fileset>
+            <fileset dir="${ext.lib.dir}/jboss">
+                <include name="jbossall-client.jar"/>
+            </fileset>
+
+        </path>
+    </target>
+
+    <target name="compile_resources">
+        <exec executable="native2ascii" input="about_ru.properties" output="${classes.dir}/about_ru.properties">
+			<arg line="-encoding windows-1251"/>
+      	</exec>
+        <exec executable="native2ascii" input="gui_dialogs_ru.properties" output="${classes.dir}/gui_dialogs_ru.properties">
+			<arg line="-encoding windows-1251"/>
+      	</exec>
+        <exec executable="native2ascii" input="gui_query_ru.properties" output="${classes.dir}/gui_query_ru.properties">
+        	<arg line="-encoding windows-1251"/>
+       	</exec>
+        <exec executable="native2ascii" input="gui_ru.properties" output="${classes.dir}/gui_ru.properties">
+        	<arg line="-encoding windows-1251"/>
+    	</exec>
+        <exec executable="native2ascii" input="engine_ru.properties" output="${classes.dir}/engine_ru.properties">
+        	<arg line="-encoding windows-1251"/>
+    	</exec>
+    	<exec executable="native2ascii" input="help_ru.properties" output="${classes.dir}/help_ru.properties">
+    		<arg line="-encoding windows-1251"/>
+  		</exec>
+        <copy todir="${classes.dir}/resources">
+            <fileset dir="resources"/>
+        </copy>
+    </target>
+
+    <target name="packaging" depends="init, compile_resources">
+        <jar destfile="${deploy.dir}/${module.name}.jar">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Main-Class" value="net.bgx.bgxnetwork.bgxop.Application"/>
+				<!--
+				<attribute name="Class-Path" value="lib/jungviewer.jar lib/tools.jar lib/uitools.jar lib/client-security.jar lib/client-query.jar lib/transfer.jar lib/client-accountmanager.jar lib/persistence.jar lib/net.jar lib/jbossall-client.jar lib/jboss-ejb3.jar lib/hibernate3.jar lib/jboss-aop-jdk50.jar lib/jboss-aspect-library-jdk50.jar lib/jung-1.7.2.jar lib/sdonm.jar lib/sdoapi.jar lib/sdoutl.jar lib/commons-collections-3.1.jar lib/colt.jar lib/config.jar"/>
+				-->
+				<attribute name="Class-Path" value="lib/oracle-client.jar lib/jungviewer.jar lib/toolkit.jar lib/tools.jar lib/uitools.jar lib/client-security.jar lib/client-query.jar lib/transfer.jar lib/client-accountmanager.jar lib/client-auditmanager.jar lib/persistence.jar lib/net.jar lib/jbossall-client.jar lib/jboss-ejb3x.jar lib/jboss-ejb3.jar lib/hibernate3.jar lib/jboss-aop-jdk50.jar lib/jboss-aspect-library-jdk50.jar lib/jung-1.7.6.jar lib/sdonm.jar lib/sdoapi.jar lib/sdoutl.jar lib/commons-collections-3.1.jar lib/colt.jar lib/config.jar lib/wizard.jar"/>
+            	<!--
+				<attribute name="Class-Path" value="lib/oracle-client.jar lib/jungviewer.jar lib/toolkit.jar lib/tools.jar lib/uitools.jar lib/client-security.jar lib/client-query.jar lib/transfer.jar lib/client-accountmanager.jar lib/client-auditmanager.jar lib/persistence.jar lib/net.jar lib/jbossall-client.jar lib/jboss-ejb3x.jar lib/jboss-ejb3.jar lib/hibernate3.jar lib/jboss-aop-jdk50.jar lib/jboss-aspect-library-jdk50.jar lib/jung-1.7.2.jar lib/sdonm.jar lib/sdoapi.jar lib/sdoutl.jar lib/commons-collections-3.1.jar lib/colt.jar lib/config.jar"/>
+				-->
+            </manifest>
+            <fileset dir="${classes.dir}">
+                <include name="**/*.*"/>
+            </fileset>
+        </jar>
+    </target>
+</project>
