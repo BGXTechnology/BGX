@@ -1,2 +1,6 @@
 # BGX
- The repository contains the documentation and code of the BGX project, an innovative mobile gaming platform
+The BGX is the most practical decentralized payment processing solution for the $60BN USD 2BN user mobile games market. Using a network of independent processing nodes, BGX can achieve extremely fast transaction speeds at very low costs, without sacrificing decentralization or security. 
+That makes it ideal for any industry that is reliant on a multitude of micro- and nano-transactions from a large number of participants. The mobile games market is the perfect application of such the BGX Platform as most of its transactions are impulsive, instantaneous and less than $10 USD in value. 
+While the standard blockchain solutions do not have the capacity to handle any large market and centralized payments are being disrupted by more effective and equitable decentralized solutions, BGX empowers blockchain technology to move towards a world of new applications. 
+The algorithm used by BGX utilizes an incentive-based economic model to create a node-based decentralized architecture that is capable of processing 104 transactions per second (compares with Ethereum’s 100 or VISA’s 24K) at very low costs and at almost instantaneous speeds. Meanwhile, the decentralized platform eliminates unnecessary intermediaries, disrupts profit-first incentives present at centralized organizations, and distributes the storage of data, verification of transactions, and profits among many independent nodes.
+Welcome to our repository! 
