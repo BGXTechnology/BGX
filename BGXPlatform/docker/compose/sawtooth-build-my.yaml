@@ -24,7 +24,7 @@ services:
         - http_proxy
         - https_proxy
         - no_proxy
-    image: sawtooth-validator-local:${ISOLATION_ID}
+    image: sawtooth-validator-bgx:${ISOLATION_ID}
     volumes:
       - ../../:/project/sawtooth-core
 
@@ -36,57 +36,57 @@ services:
         - http_proxy
         - https_proxy
         - no_proxy
-    image: sawtooth-adm-local:${ISOLATION_ID}
+    image: sawtooth-adm-bgx:${ISOLATION_ID}
     volumes:
       - ../../:/project/sawtooth-core
 
-  smallbank-rust-tp:
-    build:
-      context: ../../
-      dockerfile: ./families/smallbank/smallbank_rust/Dockerfile
-      args:
-        - http_proxy
-        - https_proxy
-        - no_proxy
-    image: smallbank-rust-tp-local:${ISOLATION_ID}
-    volumes:
-      - ../../:/project/sawtooth-core
+#  smallbank-rust-tp:
+#    build:
+#      context: ../../
+#      dockerfile: ./families/smallbank/smallbank_rust/Dockerfile
+#      args:
+#        - http_proxy
+#        - https_proxy
+#        - no_proxy
+#    image: smallbank-rust-tp-local:${ISOLATION_ID}
+#    volumes:
+#      - ../../:/project/sawtooth-core
 
-  smallbank-workload:
-    build:
-      context: ../../
-      dockerfile: ./perf/smallbank_workload/Dockerfile
-      args:
-        - http_proxy
-        - https_proxy
-        - no_proxy
-    image: smallbank-workload-local:${ISOLATION_ID}
-    volumes:
-      - ../../:/project/sawtooth-core
+#  smallbank-workload:
+#    build:
+#      context: ../../
+#      dockerfile: ./perf/smallbank_workload/Dockerfile
+#      args:
+#        - http_proxy
+#        - https_proxy
+#        - no_proxy
+#    image: smallbank-workload-local:${ISOLATION_ID}
+#    volumes:
+#      - ../../:/project/sawtooth-core
 
-  intkey-tp-rust:
-    build:
-      context: ../../
-      dockerfile: ./sdk/examples/intkey_rust/Dockerfile
-      args:
-        - http_proxy
-        - https_proxy
-        - no_proxy
-    image: sawtooth-intkey-tp-rust-local:${ISOLATION_ID}
-    volumes:
-      - ../../:/project/sawtooth-core
+#  intkey-tp-rust:
+#    build:
+#      context: ../../
+#      dockerfile: ./sdk/examples/intkey_rust/Dockerfile
+#      args:
+#        - http_proxy
+#        - https_proxy
+#        - no_proxy
+#    image: sawtooth-intkey-tp-rust-local:${ISOLATION_ID}
+#    volumes:
+#      - ../../:/project/sawtooth-core
 
-  xo-tp-rust:
-    build:
-      context: ../../
-      dockerfile: ./sdk/examples/xo_rust/Dockerfile
-      args:
-        - http_proxy
-        - https_proxy
-        - no_proxy
-    image: sawtooth-xo-tp-rust-local:${ISOLATION_ID}
-    volumes:
-      - ../../:/project/sawtooth-core
+#  xo-tp-rust:
+#    build:
+#      context: ../../
+#      dockerfile: ./sdk/examples/xo_rust/Dockerfile
+#      args:
+#        - http_proxy
+#        - https_proxy
+#        - no_proxy
+#    image: sawtooth-xo-tp-rust-local:${ISOLATION_ID}
+#    volumes:
+#      - ../../:/project/sawtooth-core
 
   signing:
     build:
@@ -96,54 +96,54 @@ services:
         - http_proxy
         - https_proxy
         - no_proxy
-    image: sawtooth-signing-local:${ISOLATION_ID}
+    image: sawtooth-signing-bgx:${ISOLATION_ID}
     volumes:
       - ../../:/project/sawtooth-core
 
-  cli:
-    build:
-      context: ../../
-      dockerfile: ./cli/Dockerfile
-      args:
-        - http_proxy
-        - https_proxy
-        - no_proxy
-    image: sawtooth-cli-local:${ISOLATION_ID}
-    volumes:
-      - ../../:/project/sawtooth-core
+#  cli:
+#    build:
+#      context: ../../
+#      dockerfile: ./cli/Dockerfile
+#      args:
+#        - http_proxy
+#        - https_proxy
+#        - no_proxy
+#    image: sawtooth-cli-bgx:${ISOLATION_ID}
+#    volumes:
+#      - ../../:/project/sawtooth-core
 
-  python-sdk:
-    build:
-      context: ../../
-      dockerfile: ./sdk/python/Dockerfile
-      args:
-        - http_proxy
-        - https_proxy
-        - no_proxy
-    image: sawtooth-python-sdk-local:${ISOLATION_ID}
-    volumes:
-      - ../../:/project/sawtooth-core
+#  python-sdk:
+#    build:
+#      context: ../../
+#      dockerfile: ./sdk/python/Dockerfile
+#      args:
+#       - http_proxy
+#        - https_proxy
+#        - no_proxy
+#    image: sawtooth-python-sdk-bgx:${ISOLATION_ID}
+#    volumes:
+#      - ../../:/project/sawtooth-core
 
-  rest-api:
-    build:
-      context: ../../
-      dockerfile: ./rest_api/Dockerfile
-      args:
-        - http_proxy
-        - https_proxy
-        - no_proxy
-    image: sawtooth-rest-api-local:${ISOLATION_ID}
-    volumes:
-      - ../../:/project/sawtooth-core
+#  rest-api:
+#    build:
+#      context: ../../
+#      dockerfile: ./rest_api/Dockerfile
+#      args:
+#        - http_proxy
+#        - https_proxy
+#        - no_proxy
+#    image: sawtooth-rest-api-bgx:${ISOLATION_ID}
+#    volumes:
+#      - ../../:/project/sawtooth-core
 
-  devmode-rust:
-    build:
-      context: ../../
-      dockerfile: ./sdk/examples/devmode_rust/Dockerfile
-      args:
-        - http_proxy
-        - https_proxy
-        - no_proxy
-    image: sawtooth-devmode-rust-local:${ISOLATION_ID}
-    volumes:
-      - ../../:/project/sawtooth-core
+#  devmode-rust:
+#    build:
+#      context: ../../
+#      dockerfile: ./sdk/examples/devmode_rust/Dockerfile
+#      args:
+#        - http_proxy
+#        - https_proxy
+#        - no_proxy
+#    image: sawtooth-devmode-rust-bgx:${ISOLATION_ID}
+#    volumes:
+#      - ../../:/project/sawtooth-core
