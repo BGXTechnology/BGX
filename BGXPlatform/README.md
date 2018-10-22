@@ -12,10 +12,10 @@ shared state between untrusted parties coordinated by consensus algorithms.
 Documentation
 -------------
 
-Documentation for how to run and extend Sawtooth is available here:
-https://sawtooth.hyperledger.org/docs/
+Documentation for how to run and extend Sawtooth-BGX is available here:
+https://bgx.ai/
 
-Hyperledger Sawtooth Core Developers Setup Guide can be found here: [BUILD.md](BUILD.md)
+Sawtooth-BGX Core Developers Setup Guide can be found here: [BUILD.md](BUILD.md)
 
 Running examples of Sawtooth-bgx blockchains can be found here:
 https://sawtooth.hyperledger.org/examples/
@@ -32,9 +32,9 @@ Information on what _Active_ entails can be found in the
 License
 -------
 
-Hyperledger Sawtooth-bgx software is licensed under the [Apache License Version 2.0](LICENSE) software license.
+Sawtooth-BGX software is licensed under the [Apache License Version 2.0](LICENSE) software license.
 
-Hyperledger Sawtooth documentation in the [docs](docs) subdirectory is licensed under
+Sawtooth-BGX documentation in the [docs](docs) subdirectory is licensed under
 a Creative Commons Attribution 4.0 International License.  You may obtain a copy of the
 license at: http://creativecommons.org/licenses/by/4.0/.
 
