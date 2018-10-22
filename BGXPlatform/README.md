@@ -1,10 +1,10 @@
 
-![Hyperledger Sawtooth](images/sawtooth_logo_light_blue-small.png)
+![Hyperledger Sawtooth-BGX](images/sawtooth_logo_light_blue-small.png)
 
-Hyperledger Sawtooth
+Hyperledger Sawtooth-BGX
 -------------
 
-Hyperledger Sawtooth is an enterprise solution for building, deploying, and
+Hyperledger Sawtooth-BGX is an enterprise solution for building, deploying, and
 running distributed ledgers (also called blockchains). It provides an extremely
 modular and flexible platform for implementing transaction-based updates to
 shared state between untrusted parties coordinated by consensus algorithms.
