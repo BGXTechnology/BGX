@@ -1,0 +1,129 @@
+<!DOCTYPE Project SYSTEM "http://www.slickedit.com/dtd/vse/10.0/vpj.dtd">
+<Project
+    Version="10.0"
+    VendorName="SlickEdit"
+    TemplateName="Python - Empty Project"
+    WorkingDir=".">
+    <Files>
+        <Folder
+            Name="Source Files"
+            Filters="*.py"
+            GUID="{98D3773B-A5E6-46F4-84E3-DE940EED47CD}">
+            <F N="sawtooth_rest_api/__init__.py"/>
+            <F N="sawtooth_rest_api/protobuf/__init__.py"/>
+            <F N="sawtooth_rest_api/protobuf/authorization_pb2.py"/>
+            <F N="sawtooth_rest_api/protobuf/batch_pb2.py"/>
+            <F N="sawtooth_rest_api/protobuf/block_pb2.py"/>
+            <F N="sawtooth_rest_api/protobuf/client_batch_pb2.py"/>
+            <F N="sawtooth_rest_api/protobuf/client_batch_submit_pb2.py"/>
+            <F N="sawtooth_rest_api/protobuf/client_block_pb2.py"/>
+            <F N="sawtooth_rest_api/protobuf/client_event_pb2.py"/>
+            <F N="sawtooth_rest_api/protobuf/client_list_control_pb2.py"/>
+            <F N="sawtooth_rest_api/protobuf/client_peers_pb2.py"/>
+            <F N="sawtooth_rest_api/protobuf/client_receipt_pb2.py"/>
+            <F N="sawtooth_rest_api/protobuf/client_state_pb2.py"/>
+            <F N="sawtooth_rest_api/protobuf/client_status_pb2.py"/>
+            <F N="sawtooth_rest_api/protobuf/client_transaction_pb2.py"/>
+            <F N="tests/unit/components.py"/>
+            <F N="sawtooth_rest_api/config.py"/>
+            <F N="sawtooth_rest_api/protobuf/consensus_pb2.py"/>
+            <F N="sawtooth_rest_api/error_handlers.py"/>
+            <F N="sawtooth_rest_api/protobuf/events_pb2.py"/>
+            <F N="sawtooth_rest_api/exceptions.py"/>
+            <F N="sawtooth_rest_api/protobuf/genesis_pb2.py"/>
+            <F N="sawtooth_rest_api/protobuf/identity_pb2.py"/>
+            <F N="sawtooth_rest_api/protobuf/merkle_pb2.py"/>
+            <F N="sawtooth_rest_api/messaging.py"/>
+            <F N="sawtooth_rest_api/protobuf/network_pb2.py"/>
+            <F N="sawtooth_rest_api/protobuf/processor_pb2.py"/>
+            <F N="sawtooth_rest_api/rest_api.py"/>
+            <F N="sawtooth_rest_api/route_handlers.py"/>
+            <F N="sawtooth_rest_api/protobuf/setting_pb2.py"/>
+            <F N="setup.py"/>
+            <F N="sawtooth_rest_api/protobuf/state_context_pb2.py"/>
+            <F N="sawtooth_rest_api/state_delta_subscription_handler.py"/>
+            <F N="tests/unit/test_batch_requests.py"/>
+            <F N="tests/unit/test_block_requests.py"/>
+            <F N="tests/unit/test_config.py"/>
+            <F N="tests/unit/test_peers_request.py"/>
+            <F N="tests/unit/test_receipt_requests.py"/>
+            <F N="tests/unit/test_state_requests.py"/>
+            <F N="tests/unit/test_submit_requests.py"/>
+            <F N="tests/unit/test_txn_requests.py"/>
+            <F N="sawtooth_rest_api/protobuf/transaction_pb2.py"/>
+            <F N="sawtooth_rest_api/protobuf/transaction_receipt_pb2.py"/>
+            <F N="sawtooth_rest_api/protobuf/validator_pb2.py"/>
+        </Folder>
+        <Folder
+            Name="Other Files"
+            Filters=""
+            GUID="{85C526DC-AD14-4A20-AA03-036D4C3885D6}">
+            <F N="nose2.cfg"/>
+            <F N="openapi.yaml"/>
+            <F N="tests/rest-api-tests.dockerfile"/>
+            <F N="packaging/rest_api.toml.example"/>
+            <F N="packaging/systemd/sawtooth-rest-api.service"/>
+            <F N="tests/unit_rest_api.yaml"/>
+        </Folder>
+    </Files>
+    <Config
+        Name="Debug"
+        DebugCallbackName="pydbgp"
+        Type="python"
+        OutputFile=""
+        AppType="python"
+        CompilerConfigName="">
+        <Menu>
+            <Target
+                Name="Execute"
+                MenuCaption="E&amp;xecute"
+                Dialog="_python_options_form Run"
+                CaptureOutputWith="ProcessBuffer"
+                SaveOption="SaveWorkspaceFiles"
+                RunFromDir="%rw"
+                Deletable="0">
+                <Exec CmdLine='python %(SLICKEDIT_PYTHON_EXECUTE_ARGS) "%f"'/>
+            </Target>
+            <Target
+                Name="Debug"
+                MenuCaption="&amp;Debug"
+                Dialog="_python_options_form Debug"
+                CaptureOutputWith="ProcessBuffer"
+                SaveOption="SaveNone"
+                RunFromDir="%rw"
+                Deletable="0">
+                <Exec
+                    CmdLine="python_debug"
+                    Type="Slick-C"/>
+            </Target>
+            <Target
+                Name="Python Options"
+                MenuCaption="Python &amp;Options"
+                ShowOnMenu="HideIfNoCmdLine"
+                Deletable="0">
+                <Exec
+                    CmdLine="pythonoptions"
+                    Type="Slick-C"/>
+            </Target>
+        </Menu>
+        <List Name="Python Options">
+            <Item
+                Name="DefaultFile"
+                Value=""/>
+        </List>
+        <List Name="pydbgp Options">
+            <Item
+                Name="ServerHost"
+                Value="127.0.0.1"/>
+            <Item
+                Name="ServerPort"
+                Value="0"/>
+            <Item
+                Name="ListenInBackground"
+                Value="1"/>
+            <Item
+                Name="show_hidden"
+                Value="0"/>
+        </List>
+    </Config>
+</Project>
