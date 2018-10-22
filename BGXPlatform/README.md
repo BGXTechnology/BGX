@@ -1,5 +1,5 @@
 
-![Hyperledger Sawtooth-BGX](images/sawtooth_logo_light_blue-small.png)
+![Hyperledger Sawtooth-BGX](images/sawtooth_bgx_logo.png)
 
 Hyperledger Sawtooth-BGX
 -------------
@@ -17,7 +17,7 @@ https://sawtooth.hyperledger.org/docs/
 
 Hyperledger Sawtooth Core Developers Setup Guide can be found here: [BUILD.md](BUILD.md)
 
-Running examples of Sawtooth blockchains can be found here:
+Running examples of Sawtooth-bgx blockchains can be found here:
 https://sawtooth.hyperledger.org/examples/
 
 
@@ -32,7 +32,7 @@ Information on what _Active_ entails can be found in the
 License
 -------
 
-Hyperledger Sawtooth software is licensed under the [Apache License Version 2.0](LICENSE) software license.
+Hyperledger Sawtooth-bgx software is licensed under the [Apache License Version 2.0](LICENSE) software license.
 
 Hyperledger Sawtooth documentation in the [docs](docs) subdirectory is licensed under
 a Creative Commons Attribution 4.0 International License.  You may obtain a copy of the
