@@ -1,0 +1,1 @@
+{"rustc":10761786290546129367,"features":"[\"default\", \"nodrop\", \"odds\", \"std\"]","target":14450151327924579543,"profile":4526152405984878336,"path":15643003391331638991,"deps":[["nodrop v0.1.12","nodrop",12572216583514107286],["odds v0.2.26","odds",13236667299006322317]],"local":[{"Precalculated":"0.3.25"}],"rustflags":[],"edition":"Edition2015"}

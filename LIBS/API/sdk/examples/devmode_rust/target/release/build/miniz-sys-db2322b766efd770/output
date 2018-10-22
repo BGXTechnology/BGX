@@ -1,0 +1,35 @@
+TARGET = Some("x86_64-unknown-linux-gnu")
+OPT_LEVEL = Some("3")
+HOST = Some("x86_64-unknown-linux-gnu")
+CC_x86_64-unknown-linux-gnu = None
+CC_x86_64_unknown_linux_gnu = None
+HOST_CC = None
+CC = None
+CFLAGS_x86_64-unknown-linux-gnu = None
+CFLAGS_x86_64_unknown_linux_gnu = None
+HOST_CFLAGS = None
+CFLAGS = None
+DEBUG = Some("false")
+running: "cc" "-O3" "-ffunction-sections" "-fdata-sections" "-fPIC" "-m64" "-Wall" "-Wextra" "-o" "/project/sawtooth-core/sdk/examples/devmode_rust/target/release/build/miniz-sys-db2322b766efd770/out/miniz.o" "-c" "miniz.c"
+cargo:warning=miniz.c: In function 'tdefl_find_match':
+cargo:warning=miniz.c:2313:3: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+cargo:warning=   mz_uint16 c01 = TDEFL_READ_UNALIGNED_WORD(&d->m_dict[pos + match_len - 1]), s01 = TDEFL_READ_UNALIGNED_WORD(s);
+cargo:warning=   ^
+cargo:warning=miniz.c:2325:7: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+cargo:warning=       TDEFL_PROBE; TDEFL_PROBE; TDEFL_PROBE;
+cargo:warning=       ^
+cargo:warning=miniz.c:2325:7: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+cargo:warning=miniz.c:2325:7: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+cargo:warning=miniz.c:2337:7: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+cargo:warning=       c01 = TDEFL_READ_UNALIGNED_WORD(&d->m_dict[pos + match_len - 1]);
+cargo:warning=       ^
+exit code: 0
+AR_x86_64-unknown-linux-gnu = None
+AR_x86_64_unknown_linux_gnu = None
+HOST_AR = None
+AR = None
+running: "ar" "crs" "/project/sawtooth-core/sdk/examples/devmode_rust/target/release/build/miniz-sys-db2322b766efd770/out/libminiz.a" "/project/sawtooth-core/sdk/examples/devmode_rust/target/release/build/miniz-sys-db2322b766efd770/out/miniz.o"
+exit code: 0
+cargo:rustc-link-lib=static=miniz
+cargo:rustc-link-search=native=/project/sawtooth-core/sdk/examples/devmode_rust/target/release/build/miniz-sys-db2322b766efd770/out
+cargo:root=/project/sawtooth-core/sdk/examples/devmode_rust/target/release/build/miniz-sys-db2322b766efd770/out
