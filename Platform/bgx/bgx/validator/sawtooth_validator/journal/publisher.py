@@ -21,6 +21,7 @@ import logging
 import queue
 from threading import RLock
 import time
+import hashlib
 
 from sawtooth_validator.concurrent.thread import InstrumentedThread
 from sawtooth_validator.execution.scheduler_exceptions import SchedulerError
@@ -114,18 +115,20 @@ class _CandidateBlock(object):
 
     def __init__(self,
                  block_store,
-                 consensus,
                  scheduler,
                  committed_txn_cache,
                  block_builder,
                  max_batches,
                  batch_injectors,
-                 ):
+                 previous_block,
+                 identity_signer,
+                 settings_view):
+        self._previous_block = previous_block
         self._pending_batches = []
         self._pending_batch_ids = set()
         self._injected_batch_ids = set()
         self._block_store = block_store
-        self._consensus = consensus
+        # self._consensus = consensus
         self._scheduler = scheduler
         self._committed_txn_cache = committed_txn_cache
         # Look-up cache for transactions that are committed in the current
@@ -134,6 +137,11 @@ class _CandidateBlock(object):
         self._block_builder = block_builder
         self._max_batches = max_batches
         self._batch_injectors = batch_injectors
+        # New fields
+        self._summary = None
+        self._remaining_batches = []
+        self._identity_signer = identity_signer
+        self._settings_view = settings_view
 
     def __del__(self):
         # Cancel the scheduler if it is not complete
@@ -163,8 +171,9 @@ class _CandidateBlock(object):
     @property
     def can_add_batch(self):
         return (
-            self._max_batches == 0
-            or len(self._pending_batches) < self._max_batches
+            self._summary is None and
+            (self._max_batches == 0
+            or len(self._pending_batches) < self._max_batches)
         )
 
     def _check_batch_dependencies(self, batch, committed_txn_cache):
@@ -279,8 +288,9 @@ class _CandidateBlock(object):
     def check_publish_block(self):
         """Check if it is okay to publish this candidate.
         """
-        return self._consensus.check_publish_block(
-            self._block_builder.block_header)
+        # return self._consensus.check_publish_block(
+        #     self._block_builder.block_header)
+        return True
 
     def _sign_block(self, block, identity_signer):
         """ The block should be complete and the final
@@ -404,6 +414,110 @@ class _CandidateBlock(object):
         self._sign_block(builder, identity_signer)
         return builder.build_block()
 
+    def summarize(self, force):
+        if self._summary:
+            return self._summary
+
+        if not force and len(self._pending_batches) == 0:
+            raise BlockEmpty()
+
+        self._scheduler.unschedule_incomplete_batches()
+        self._scheduler.finalize()
+
+        self._scheduler.complete(True)
+
+        results = []
+        batch_ids = self._scheduler._batch_by_id.keys()
+        for id in batch_ids:
+            batch_result = self._scheduler.get_batch_execution_result(id)
+            if batch_result:
+                txn_results = self._scheduler.get_transaction_execution_results(id)
+                results.append([txn_results, batch_result, id])
+            else:
+                results.append([[], None, id])
+
+        committed_txn_cache = self._committed_txn_cache
+
+        ending_state_hash = None
+        for result in results:
+            batch_result = result[1]
+            if not batch_result or not batch_result.state_hash:
+                continue
+            else:
+                ending_state_hash = batch_result.state_hash
+                break
+
+        # Array of (batch_id, transactions)
+        batch_txn_results = []
+        for result in results:
+            if result[1]:
+                batch_txn_results.append([result[2], result[0]])
+            else:
+                batch_txn_results.append([result[2], None])
+
+        batches_w_no_results = []
+        valid_batch_ids = []
+        for batch_result in batch_txn_results:
+            if batch_result[1] is None:
+                batches_w_no_results.append(batch_result[0])
+                continue
+            txns_valid = True
+            for t in batch_result[1]:
+                if not t.is_valid:
+                    txns_valid = False
+                    break
+            if txns_valid:
+                valid_batch_ids.append(batch_result[0])
+
+        bad_batches = []
+        pending_batches= []
+        only_injected = True
+        if len(self._injected_batch_ids) == len(valid_batch_ids):
+            for i in range(len(self._injected_batch_ids)):
+                if self._injected_batch_ids[i] != valid_batch_ids[i]:
+                    only_injected = False
+                    break
+
+        if only_injected:
+            # There only injected batches in this block
+            return None
+
+        for batch in self._pending_batches:
+            header_signature = batch.header_signature
+
+            if header_signature in batches_w_no_results:
+                if header_signature not in self._injected_batch_ids:
+                    pending_batches.append(batch)
+                else:
+                    LOGGER.debug("Failed to inject batch {}", header_signature)
+            elif header_signature in valid_batch_ids:
+                if not self._check_batch_dependencies(batch, committed_txn_cache):
+                    # bad_batches.append(batch)
+                    # pending_batches = []
+                    # for b in self._pending_batches:
+                    #     if b in bad_batches:
+                    #         continue
+                    #     pending_batches.append(b)
+                    return None
+                else:
+                    self._block_builder.add_batch(batch)
+            else:
+                bad_batches.append(batch)
+
+        if not ending_state_hash:
+            return None
+
+        self._block_builder.set_state_hash(ending_state_hash)
+
+        batches = self._block_builder.batches
+        batch_ids = [b.header_signature for b in batches]
+
+        self._summary = [
+            hashlib.sha256(b_id.encode('utf-8')).hexdigest() for b_id in batch_ids
+        ]
+        self._remaining_batches = pending_batches
+
+        return self._summary
 
 class BlockPublisher(object):
     """
@@ -543,9 +657,12 @@ class BlockPublisher(object):
             chain_head,
             self._state_view_factory)
         LOGGER.debug("BlockPublisher: _build_candidate_block ")
-        consensus_module = ConsensusFactory.get_configured_consensus_module(
-            chain_head.header_signature,
-            state_view)
+        # try:
+        #     consensus_module = ConsensusFactory.get_configured_consensus_module(
+        #         chain_head.header_signature,
+        #         state_view)
+        # except Exception as exc:
+        #     LOGGER.debug('While getting consensus exception occured %s', exc)
 
         # using chain_head so so we can use the setting_cache
         max_batches = int(self._settings_cache.get_setting(
@@ -554,29 +671,35 @@ class BlockPublisher(object):
             default_value=0))
 
         public_key = self._identity_signer.get_public_key().as_hex()
-        consensus = consensus_module.\
-            BlockPublisher(block_cache=self._block_cache,
-                           state_view_factory=self._state_view_factory,
-                           batch_publisher=self._batch_publisher,
-                           data_dir=self._data_dir,
-                           config_dir=self._config_dir,
-                           validator_id=public_key)
+        # try:
+        #     consensus = consensus_module.\
+        #         BlockPublisher(block_cache=self._block_cache,
+        #                        state_view_factory=self._state_view_factory,
+        #                        batch_publisher=self._batch_publisher,
+        #                        data_dir=self._data_dir,
+        #                        config_dir=self._config_dir,
+        #                        validator_id=public_key)
+        # except:
+        #     pass
 
         batch_injectors = []
         if self._batch_injector_factory is not None:
             batch_injectors = self._batch_injector_factory.create_injectors(
                 chain_head.identifier)
             if batch_injectors:
-                LOGGER.debug("Loaded batch injectors: %s", batch_injectors)
+                LOGGER.debug("BlockPublisher: _build_candidate_block - Loaded batch injectors: %s", batch_injectors)
 
         block_header = BlockHeader(
             block_num=chain_head.block_num + 1,
             previous_block_id=chain_head.header_signature,
             signer_public_key=public_key)
         block_builder = BlockBuilder(block_header)
-        if not consensus.initialize_block(block_builder.block_header):
-            LOGGER.debug("Consensus not ready to build candidate block.")
-            return None
+        # try:
+        #     if not consensus.initialize_block(block_builder.block_header):
+        #         LOGGER.debug("Consensus not ready to build candidate block.")
+        #         return None
+        # except:
+        #     pass
 
         # create a new scheduler
         scheduler = self._transaction_executor.create_scheduler(
@@ -587,13 +710,20 @@ class BlockPublisher(object):
             self._block_cache.block_store)
 
         self._transaction_executor.execute(scheduler)
-        self._candidate_block = _CandidateBlock(
-            self._block_cache.block_store,
-            consensus, scheduler,
-            committed_txn_cache,
-            block_builder,
-            max_batches,
-            batch_injectors)
+
+        try:
+            self._candidate_block = _CandidateBlock(
+                self._block_cache.block_store,
+                scheduler,
+                committed_txn_cache,
+                block_builder,
+                max_batches,
+                batch_injectors,
+                chain_head,
+                self._identity_signer,
+                state_view)
+        except Exception as exc:
+            LOGGER.debug('BlockPublisher: _build_candidate_block - _candidate_block did not create - %s', exc)
 
         for batch in self._pending_batches:
             if self._candidate_block.can_add_batch:
@@ -767,7 +897,76 @@ class BlockPublisher(object):
                 return True
 
         return False
+    """
+    for proxy consensus interface
+    """
+    def initialize_block(self, block):
+        """Build new candidate block.
+        :param block: block on which to build the new one.
+        :return: None
+        """
+        LOGGER.debug('BlockPublisher: initialize_block %s', block)
+        try:
+            with self._lock:
+                if self._candidate_block is None:
+                    wrapped_block = BlockWrapper(block)
+                    self._build_candidate_block(wrapped_block)
+                else:
+                    LOGGER.debug('BlockPublisher, initialize_block: _candidate_block is not None, initialize_block \
+                                 = %s failed', block)
+        except Exception as exc:
+            # LOGGER.critical("initialize_block exception.")
+            # LOGGER.exception(exc)
+            raise exc
 
+    def summarize_block(self, force=False):
+        """Creates self._summary of Candidate Block
+        :param force: Summarize even if pending batches array of CandidateBlock is empty
+        :return: Summary of batches in block
+        """
+        LOGGER.debug('BlockPublisher: summarize_block')
+        try:
+            with self._lock:
+                if self._candidate_block is None:
+                    LOGGER.debug('BlockPublisher, summarize_block: _candidate_block is None')
+                else:
+                    return self._candidate_block.summarize(force)
+        except Exception as exc:
+            # LOGGER.critical("summarize_block exception.")
+            # LOGGER.exception(exc)
+            raise exc
+
+    def finalize_block(self, consensus=None, force=False):
+        """Finalize current candidate block, build new one.
+        :param block: consensus for _candidate_block, force for on_check_publish_block.
+        :return: (BlockBuilder) - New candidate block in a BlockBuilder wrapper.
+        """
+        LOGGER.debug('BlockPublisher: finalize_block with consensus=%s', consensus)
+        new_candidate_block = None
+        try:
+            with self._lock:
+                if self._candidate_block is None:
+                    LOGGER.debug('BlockPublisher, finalize_block: _candidate_block is None, nothing to finalize')
+                else:
+                    self.on_check_publish_block(force)
+
+                    if consensus is not None:
+                        self._candidate_block._consensus = consensus
+                    new_candidate_block = self._candidate_block.finalize_block(self._identity_signer,
+                                                                               self._pending_batches)
+        except Exception as exc:
+            # LOGGER.critical("finalize_block exception.")
+            # LOGGER.exception(exc)
+            raise exc
+
+        return new_candidate_block
+
+    def cancel_block(self):
+        LOGGER.debug('BlockPublisher: cancel_block')
+        self._candidate_block = None
+        """
+        self._call("cancel_block")
+        """
 
 class _RollingAverage(object):
 
@@ -789,3 +988,19 @@ class _RollingAverage(object):
         self._current_average = sum(self._samples) / len(self._samples)
 
         return self._current_average
+
+class BlockEmpty(Exception):
+    """There are no batches in the block."""
+
+class BlockInProgress(Exception):
+    """There is already a block in progress."""
+
+
+class BlockNotInitialized(Exception):
+    """There is no block in progress to finalize."""
+
+
+class MissingPredecessor(Exception):
+    """A predecessor was missing"""
+
+
