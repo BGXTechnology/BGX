@@ -1,10 +1,10 @@
 
-![Hyperledger Sawtooth](images/sawtooth_logo_light_blue-small.png)
+![Hyperledger BGX-Sawtooth](bgx/images/logo-bgx.png)
 
-Hyperledger Sawtooth Core Developer's Setup Guide
+Hyperledger BGX-Sawtooth Core Developer's Setup Guide
 =============
 
-If you are planning to contribute code to the Sawtooth project, please review
+If you are planning to contribute code to the BGX-Sawtooth project, please review
 the contributing guide: [CONTRIBUTING.md]
 
 Supported operating systems: Ubuntu 16.04 and macOS
