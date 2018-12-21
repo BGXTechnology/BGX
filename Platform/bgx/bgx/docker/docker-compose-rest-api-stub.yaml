@@ -1,0 +1,41 @@
+version: '3.6'
+
+services:
+
+  rest-api-stub:
+    build:
+      context: ../..
+      dockerfile: bgx/rest-api-stub/Dockerfile
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
+        - BGX_TOP=bgx
+    image: rest-api-stub
+    environment:
+    - SAWTOOTH_HOME=/project/${BGX_TOP}/data-bgx
+    volumes:
+      - ../..:/project/${BGX_TOP}
+    container_name: rest-api-stub
+    networks:
+    - network1
+    ports:
+      - "8008:8008"
+    # depends_on:
+    #   - validator
+    command: |
+      bash -c "
+        bgx/bin/protogen
+        cd bgx/rest-api-stub
+        cd chilkat-linux;
+        python3 installChilkat.py
+        cd ../
+        python3 setup.py clean --all
+        python3 setup.py build
+        bgx-rest-api-stub -vv --bind rest-api-stub:8008
+      "
+    stop_signal: SIGKILL
+
+networks:
+  network1:
+     name: bgx-net-stub

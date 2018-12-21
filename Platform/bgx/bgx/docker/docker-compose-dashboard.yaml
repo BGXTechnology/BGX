@@ -1,0 +1,68 @@
+version: '3.6'
+
+services:
+
+#  rest-api-stub:
+#    build:
+#      context: ../..
+#      dockerfile: bgx/rest-api-stub/Dockerfile
+#      args:
+#        - http_proxy
+#        - https_proxy
+#        - no_proxy
+#        - BGX_TOP=bgx
+#    image: rest-api-stub
+#    environment:
+#    - SAWTOOTH_HOME=/project/${BGX_TOP}/data-bgx
+#    volumes:
+#      - ../..:/project/${BGX_TOP}
+#    container_name: rest-api-stub
+#    ports:
+#      - "8001:8001"
+#    networks:
+#      - network1
+#    # depends_on:
+#    #   - validator
+#    command: |
+#      bash -c "
+#        bgx/bin/protogen
+#        cd bgx/rest-api-stub
+#        cd chilkat-linux;ls -l;
+#        python3 installChilkat.py
+#        cd ../
+#        python3 setup.py clean --all
+#        python3 setup.py build
+#        bgx-rest-api-stub -v --bind rest-api-stub:8001
+#      "
+#    stop_signal: SIGKILL
+
+
+  web_app:
+    build:
+      context: ../..
+      dockerfile: bgx/web_app_node/Dockerfile
+      args:
+        - BGX_TOP=bgx
+    volumes:
+      - ../..:/project/${BGX_TOP}
+    container_name: web_app
+    ports:
+      - "8000:8000"
+    networks:
+      - network1
+    environment:
+      - ENV_VAR
+    #depends_on:
+    #   - rest-api-stub
+    command: |
+      bash -c "
+        cd bgx/web_app_node
+        npm i
+        node index.js
+      "
+    stop_signal: SIGKILL
+
+
+networks:
+  network1:
+     name: bgx-network

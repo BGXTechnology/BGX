@@ -1,0 +1,38 @@
+@import "~bootstrap/scss/bootstrap";
+@import "~react-table/react-table.css";
+
+.logo svg {
+  width: 150px;
+}
+
+.header {
+  background-color: gray;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+
+.node circle {
+  cursor: pointer;
+  stroke: #3182bd;
+  stroke-width: 1.5px;
+}
+
+.node text {
+  font: 10px sans-serif;
+  pointer-events: none;
+  text-anchor: middle;
+}
+
+line.link {
+  fill: none;
+  stroke: #9ecae1;
+  stroke-width: 1.5px;
+}
+
+.tooltip {
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 3px;
+  padding: 5px;
+}

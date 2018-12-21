@@ -1,0 +1,179 @@
+# Copyright 2018 Cargill Incorporated
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+version: '3.6'
+
+services:
+
+  settings-tp:
+    build:
+      context: ../..
+      dockerfile: bgx/docker/settings/Dockerfile-installed-${DISTR}
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
+        - BGX_TOP=bgx
+    image: sawtooth-settings-tp:${ISOLATION_ID}
+    container_name: sawtooth-settings-tp-default
+    depends_on:
+      - validator
+    entrypoint: settings-tp -vv -C tcp://validator:4004
+
+  validator:
+    build:
+      context: ../..
+      dockerfile: bgx/docker/validator/Dockerfile-installed-${DISTR}
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
+        - BGX_TOP=bgx
+    image: sawtooth-validator-bgx:${ISOLATION_ID}
+    container_name: sawtooth-validator-bgx
+    expose:
+      - 4004
+    ports:
+      - "4004:4004"
+    # start the validator with an empty genesis batch
+    entrypoint: "bash -c \"\
+        sawadm keygen && \
+        sawtooth keygen my_key && \
+        sawset genesis -k /root/.sawtooth/keys/my_key.priv && \
+        sawadm genesis config-genesis.batch && \
+        sawtooth-validator -vv \
+          --endpoint tcp://validator:8800 \
+          --bind component:tcp://eth0:4004 \
+          --bind network:tcp://eth0:8800 \
+        \""
+
+  rest-api:
+    build:
+      context: ../..
+      dockerfile: bgx/docker/rest_api/Dockerfile-installed-${DISTR}
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
+    image: sawtooth-rest-api:${ISOLATION_ID}
+    container_name: sawtooth-rest-api-bgx
+    ports:
+      - "8008:8008"
+    depends_on:
+      - validator
+    entrypoint: sawtooth-rest-api -C tcp://validator:4004 --bind rest-api:8008
+
+  shell:
+    build:
+      context: ../..
+      dockerfile: bgx/docker/ci/sawtooth-shell-installed-${DISTR}
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
+        - BGX_TOP=bgx
+    image: sawtooth-shell:${ISOLATION_ID}
+    container_name: sawtooth-shell-bgx
+    depends_on:
+      - rest-api
+    entrypoint: "bash -c \"\
+        sawtooth keygen && \
+        tail -f /dev/null \
+        \""
+
+  admin-tools:
+    build:
+      context: ../..
+      dockerfile: bgx/docker/adm/Dockerfile-installed-${DISTR}
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
+    image: sawtooth-admin-tools:${ISOLATION_ID}
+    container_name: sawtooth-admin-tools
+
+  sawtooth-cli:
+    build:
+      context: ../..
+      dockerfile: bgx/docker/cli/Dockerfile-installed-${DISTR}
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
+    image: sawtooth-cli:${ISOLATION_ID}
+    container_name: sawtooth-cli-bgx
+
+  block-info-tp:
+    build:
+      context: ../..
+      dockerfile: bgx/docker/families/block_info/Dockerfile-installed-${DISTR}
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
+    image: sawtooth-block-info-tp:${ISOLATION_ID}
+    container_name: sawtooth-block-info-tp-bgx
+
+  identity-tp:
+    build:
+      context: ../..
+      dockerfile: bgx/docker/families/identity/Dockerfile-installed-${DISTR}
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
+    image: sawtooth-identity-tp:${ISOLATION_ID}
+    container_name: sawtooth-identity-tp-bgx
+
+  python-sdk:
+    build:
+      context: ../..
+      dockerfile: bgx/docker/sdk/python/Dockerfile-installed-${DISTR}
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
+    image: sawtooth-sdk-python:${ISOLATION_ID}
+    container_name: sawtooth-sdk-python-bgx
+
+  signing:
+    build:
+      context: ../..
+      dockerfile: bgx/docker/signing/Dockerfile-installed-${DISTR}
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
+    image: sawtooth-signing:${ISOLATION_ID}
+    container_name: sawtooth-signing-bgx
+
+
+#  integration:
+#    build:
+#      context: ../..
+#      dockerfile: integration/Dockerfile-installed
+#      args:
+#        - http_proxy
+#        - https_proxy
+#        - no_proxy
+#    image: sawtooth-integration:${ISOLATION_ID}
+#    container_name: sawtooth-integration-bgx
+
+
+  sawtooth-meta:
+    build:
+      context: ../..
+      dockerfile: bgx/docker/ci/sawtooth-meta-${DISTR}
+    image: sawtooth-meta:${ISOLATION_ID}
+    container_name: sawtooth-meta

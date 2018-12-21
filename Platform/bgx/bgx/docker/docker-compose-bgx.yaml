@@ -1,0 +1,201 @@
+# Copyright 2018 Cargill Incorporated
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+version: '3.6'
+
+services:
+
+  settings-tp:
+    build:
+      context: ../..
+      dockerfile: bgx/docker/settings/Dockerfile-${DISTR}
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
+        - BGX_TOP=bgx
+    image: sawtooth-settings-tp-bgx:${ISOLATION_ID}
+    environment:
+    - SAWTOOTH_HOME=/project/${BGX_TOP}/data-bgx
+    volumes:
+      - ../..:/project/${BGX_TOP}
+    container_name: sawtooth-settings-tp-bgx
+    depends_on:
+      - validator
+    command: |
+      bash -c "
+        bgx/bin/protogen
+        cd families/settings
+        python3 setup.py clean --all
+        python3 setup.py build
+        settings-tp -vv -C tcp://validator:4004
+      "
+    stop_signal: SIGKILL
+
+  bgt-tp-python:
+    build:
+      context: ../..
+      dockerfile: bgx/families/bgt_python/Dockerfile-${DISTR}
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
+        - BGX_TOP=bgx
+    image: bgt-tp-python-bgx:${ISOLATION_ID}
+    environment:
+    - SAWTOOTH_HOME=/project/${BGX_TOP}/data-bgx
+    volumes:
+      - ../..:/project/${BGX_TOP}
+    container_name: bgt-tp-python-bgx
+    depends_on:
+      - validator
+    command: |
+      bash -c "
+        bgx/bin/protogen
+        cd bgx/families/bgt_python
+        python3 setup.py clean --all
+        python3 setup.py build
+        ../../bin/bgt-tp-python -vv -C tcp://validator:4004
+      "
+    stop_signal: SIGKILL
+
+  client:
+    build:
+      context: ../..
+      dockerfile: bgx/docker/sawtooth-shell-${DISTR}
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
+        - BGX_TOP=bgx
+    image: sawtooth-shell-bgx:${ISOLATION_ID}
+    environment:
+    - SAWTOOTH_HOME=/project/${BGX_TOP}/data-bgx
+    volumes:
+      - ../..:/project/${BGX_TOP}
+    container_name: sawtooth-shell-bgx
+    depends_on:
+      - validator
+    command: |
+      bash -c "
+        sawtooth keygen --force &&
+        tail -f /dev/null
+      "
+    stop_signal: SIGKILL
+
+
+  validator:
+    build:
+      context: ../..
+      dockerfile: bgx/docker/validator/Dockerfile-${DISTR}
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
+        - BGX_TOP=bgx
+    image: sawtooth-validator-bgx:${ISOLATION_ID}
+    environment:
+    - SAWTOOTH_HOME=/project/${BGX_TOP}/data-bgx
+    volumes:
+      - ../..:/project/${BGX_TOP}
+    container_name: sawtooth-validator-bgx
+    expose:
+      - 4004
+      - 8800
+      - 5050
+    ports:
+      - "4004:4004"
+    # start the validator with an empty genesis batch
+    # cargo build --release sawadm keygen && sawtooth keygen my_key && sawset genesis -k /root/.sawtooth/keys/my_key.priv && sawadm genesis config-genesis.batch && 
+    command: |
+      bash -c "
+        bgx/bin/protogen
+        cd validator
+        python3 setup.py clean --all
+        python3 setup.py build
+        mkdir -p bin
+        mkdir -p lib
+        if [ -d 'target' ]; then echo 'Already build'; else cargo build --release; fi
+        if [ -f 'bin/sawtooth-validator' ]; then echo 'Already copied'; else cp ./target/release/sawtooth-validator bin/sawtooth-validator; fi
+        if [ -f 'lib/libsawtooth_validator.so' ]; then echo 'Already copied'; else cp ./target/release/libsawtooth_validator.so lib/libsawtooth_validator.so; fi
+        sawadm keygen
+        sawtooth keygen my_key
+        sawset genesis -k /root/.sawtooth/keys/my_key.priv
+        #ls -l /var/lib/
+        sawadm genesis config-genesis.batch
+        sawtooth-validator -vv  \
+            --endpoint tcp://validator:8800 \
+            --bind component:tcp://eth0:4004 \
+            --bind network:tcp://eth0:8800 \
+            --bind consensus:tcp://eth0:5050 \
+      "
+    stop_signal: SIGKILL
+
+
+  rest-api:
+    build:
+      context: ../..
+      dockerfile: bgx/docker/rest_api/Dockerfile-${DISTR}
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
+        - BGX_TOP=bgx
+    image: sawtooth-rest-api-bgx:${ISOLATION_ID}
+    environment:
+    - SAWTOOTH_HOME=/project/${BGX_TOP}/data-bgx
+    volumes:
+      - ../..:/project/${BGX_TOP}
+    container_name: sawtooth-rest-api-bgx
+    ports:
+      - "8008:8008"
+    depends_on:
+      - validator
+    command: |
+      bash -c "
+        bgx/bin/protogen
+        cd rest_api
+        python3 setup.py clean --all
+        python3 setup.py build
+        sawtooth-rest-api -vv --connect tcp://validator:4004 --bind rest-api:8008
+      "
+    stop_signal: SIGKILL
+
+
+  devmode-python:
+    build:
+      context: ../..
+      dockerfile: bgx/consensus/devmode_python/Dockerfile-${DISTR}
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
+        - BGX_TOP=bgx
+    image: sawtooth-devmode-python-bgx:${ISOLATION_ID}
+    environment:
+    - SAWTOOTH_HOME=/project/${BGX_TOP}/data-bgx
+    volumes:
+      - ../..:/project/${BGX_TOP}
+    container_name: sawtooth-devmode-python-bgx
+    depends_on:
+      - validator
+    command: |
+      bash -c "
+        bgx/bin/protogen
+        cd bgx/consensus/devmode_python
+        python3 setup.py clean --all
+        python3 setup.py build
+        ../../bin/devmode-python -vv --connect tcp://validator:5050 --component tcp://validator:4004
+      "
+    stop_signal: SIGKILL

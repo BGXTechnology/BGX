@@ -1,0 +1,77 @@
+// Copyright 2018 NTRlab
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// -----------------------------------------------------------------------------
+
+syntax = "proto3";
+
+// --== Data Structures ==--
+
+// All information about a block that is relevant to PBFT consensus
+message PbftBlockMessage {
+  bytes block_id = 1;
+  // bytes previous_id = 2;
+  // The id of peer that signed this block
+  bytes signer_id = 3;
+  uint64 block_num = 4;
+  // bytes payload = 5;
+  // A summary of the contents of the block
+  bytes summary = 6;
+}
+// PBFT message info
+message PbftMessageInfo {
+  enum PbftMessageType {
+      PRE_PREPARE_MSG = 0;
+      PREPARE_MSG = 1;
+      COMMIT_MSG = 2;
+      CHECKPOINT_MSG = 3;
+  }
+  // Message type
+  PbftMessageType msg_type = 1;
+
+  // Current view 
+  uint64 view = 2;
+
+  // view seq number
+  uint64 seq_num = 3;
+
+  // nodes sign
+  bytes signer_id = 4;
+}
+// PBFT message
+message PbftMessage {
+  // message info
+  PbftMessageInfo info = 1;
+
+  // block info 
+  PbftBlockMessage block = 2;
+}
+
+//message ConsensusRegisterResponse {
+//  enum Status {
+//    STATUS_UNSET = 0;
+//    OK = 1;
+//    BAD_REQUEST = 2;
+//    SERVICE_ERROR = 3;
+//    NOT_READY = 4;
+//  }
+
+//  Status status = 1;
+
+  // Startup Info
+//  ConsensusBlock chain_head = 2;
+//  repeated ConsensusPeerInfo peers = 3;
+//  ConsensusPeerInfo local_peer_info = 4;
+//}
+
+
