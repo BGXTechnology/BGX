@@ -132,7 +132,8 @@ def start_rest_api(host, port, connection, timeout, registry,
     app.router.add_get('/wallets/{address}', handler.get_wallet)
     app.router.add_post('/wallets', handler.post_wallet)
     app.router.add_post('/fee', handler.get_fee)
-    app.router.add_get('/global_transactions', handler.list_transactions) # handler.get_global_transactions)
+    app.router.add_get('/global_transactions', handler.get_global_transactions)
+    app.router.add_post('/transactions/add_funds', handler.post_add_funds)
     #
     subscriber_handler = StateDeltaSubscriberHandler(connection)
     app.router.add_get('/subscriptions', subscriber_handler.subscriptions)

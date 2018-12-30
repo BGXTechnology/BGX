@@ -42,15 +42,15 @@ message BgxSignUpInfo {
 
     // Information that can be used internally to verify the validity of
     // the signup information stored as an opaque buffer.
-    string proof_data = 2;
+    //string proof_data = 2;
 
     // A string corresponding to the anti-Sybil ID for the enclave that
     // generated the signup information.
-    string anti_sybil_id = 3;
+    string anti_sybil_id = 2;
 
     // The nonce associated with the signup info.  Note that this must match
     // the nonce provided when the signup info was created.
-    string nonce = 4;
+    string nonce = 3;
 }
 
 message BgxValidatorMap {

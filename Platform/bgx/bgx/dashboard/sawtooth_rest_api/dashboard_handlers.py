@@ -17,12 +17,13 @@ import asyncio
 import re
 import logging
 import json
+import yaml
 import base64
 import hashlib
 import random
 import os
 from aiohttp import web
-
+import cbor
 # pylint: disable=no-name-in-module,import-error
 # needed for the google.protobuf imports to pass pylint
 from google.protobuf.json_format import MessageToDict
@@ -81,8 +82,14 @@ class DashboardRouteHandler(RouteHandler):
         #LOGGER.debug('DashboardRouteHandler: network=%s',self._network)
 
     async def index(self,request):
-        LOGGER.debug('DashboardRouteHandler: index')
-        content = open(os.path.join(ROOT, 'app/html/index.html'), 'r').read()
+        html = request.match_info.get('html', '/')
+        LOGGER.debug('DashboardRouteHandler: index=%s html=%s',request.path,html)
+        full_path = 'app/html/' +  ('index' if html == '/' else html) + '.html' 
+        try:
+            content = open(os.path.join(ROOT, full_path), 'r').read()
+        except:
+            raise errors.FileNotFound()
+
         return web.Response(content_type='text/html', text=content)
 
     async def javascript(self,request):
@@ -108,4 +115,40 @@ class DashboardRouteHandler(RouteHandler):
             request,
             data=self._network, #response['peers'],
             metadata=self._get_metadata(request, response))
+
+    async def fetch_state(self, request):
+        """Fetches data from a specific address in the validator's state tree.
+
+        Request:
+            query:
+                - head: The id of the block to use as the head of the chain
+                - address: The 70 character address of the data to be fetched
+
+        Response:
+            data: The base64 encoded binary data stored at that address
+            head: The head used for this query (most recent if unspecified)
+            link: The link to this exact query, including head block
+        """
+        error_traps = [
+            error_handlers.InvalidAddressTrap,
+            error_handlers.StateNotFoundTrap]
+
+        address = request.match_info.get('address', '')
+        head = request.url.query.get('head', None)
+
+        head, root = await self._head_to_root(head)
+        response = await self._query_validator(
+            Message.CLIENT_STATE_GET_REQUEST,
+            client_state_pb2.ClientStateGetResponse,
+            client_state_pb2.ClientStateGetRequest(
+                state_root=root, address=address),
+            error_traps)
+
+        content = cbor.loads(base64.b64decode(response['value']))
+        LOGGER.debug('DashboardRouteHandler: fetch_state=(%s)',content)
+        return self._wrap_response(
+            request,
+            data=content,
+            metadata=self._get_metadata(request, response, head=head))
+
 

@@ -119,9 +119,7 @@ def start_rest_api(host, port, connection, timeout, registry,
     app.router.add_get('/batches/{batch_id}', handler.fetch_batch)
 
     app.router.add_get('/transactions', handler.list_transactions)
-    app.router.add_get(
-        '/transactions/{transaction_id}',
-        handler.fetch_transaction)
+    app.router.add_get('/transactions/{transaction_id}',handler.fetch_transaction)
 
     app.router.add_get('/receipts', handler.list_receipts)
     app.router.add_post('/receipts', handler.list_receipts)
@@ -132,7 +130,8 @@ def start_rest_api(host, port, connection, timeout, registry,
     # 
     # ADD web app
     app.router.add_get('/', handler.index)
-    app.router.add_get('/bundle.js',handler.javascript)
+    app.router.add_get('/{html}.html', handler.index)
+    app.router.add_get('/{script}.js',handler.javascript)
 
     subscriber_handler = StateDeltaSubscriberHandler(connection)
     app.router.add_get('/subscriptions', subscriber_handler.subscriptions)

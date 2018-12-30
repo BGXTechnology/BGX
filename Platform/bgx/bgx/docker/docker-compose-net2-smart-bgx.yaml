@@ -70,7 +70,7 @@ services:
         cd bgx/families/smart_bgt_python
         python3 setup.py clean --all
         python3 setup.py build
-        ../../bin/smart-bgt-tp-python -vv -C tcp://validator-2:4006
+        smart-bgt-tp-python -vv -C tcp://validator-2:4006
       "
     stop_signal: SIGKILL
 
@@ -206,7 +206,7 @@ services:
       - validator-2
     command: |
       bash -c "
-        bin/protogen
+        bgx/bin/protogen
         cd bgx/consensus/devmode_python
         python3 setup.py clean --all
         python3 setup.py build

@@ -303,3 +303,10 @@ class ReceiptIdQueryInvalid(_ApiError):
     message = ("Requests for transaction receipts sent as a GET request must "
                "have an 'id' query parameter with a comma-separated list of "
                "at least one transaction id.")
+
+class FileNotFound(_ApiError):
+    api_code = 50
+    status_code = 404
+    title = 'File Not Found'
+    message = ("There is no file with the name specified query parameter.")
+

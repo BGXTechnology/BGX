@@ -93,7 +93,6 @@ class SmartBgtWorkload(Workload):
         self._deps = {}
         context = create_context('secp256k1')
         crypto_factory = CryptoFactory(context=context)
-        
         if args.key_file is not None:
             try:
                 with open(args.key_file, 'r') as infile:

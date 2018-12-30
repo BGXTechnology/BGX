@@ -15,21 +15,21 @@
 
 import logging
 
-from sawtooth_bgt.bgt_consensus.consensus_state import ConsensusState
-from sawtooth_bgt.bgt_consensus.consensus_state_store import ConsensusStateStore
-from sawtooth_bgt.bgt_consensus import bgt_enclave_factory as factory
-from sawtooth_bgt.bgt_consensus import utils
-from sawtooth_bgt.bgt_consensus.bgt_settings_view import BgtSettingsView
-from sawtooth_bgt.journal.block_wrapper import BlockWrapper
-from sawtooth_bgt.journal.consensus.consensus import ForkResolverInterface
+from bgx_pbft.consensus.consensus_state import ConsensusState
+from bgx_pbft.consensus.consensus_state_store import ConsensusStateStore
+from bgx_pbft.consensus import pbft_enclave_factory as factory
+from bgx_pbft.consensus import utils
+from bgx_pbft.consensus.pbft_settings_view import PbftSettingsView
+from bgx_pbft.journal.block_wrapper import BlockWrapper
+from bgx_pbft.journal.consensus.consensus import ForkResolverInterface
 
-from sawtooth_bgt_common.validator_registry_view.validator_registry_view import ValidatorRegistryView
+from bgx_pbft_common.validator_registry_view.validator_registry_view import ValidatorRegistryView
 
 
 LOGGER = logging.getLogger(__name__)
 
 
-class BgtForkResolver(ForkResolverInterface):
+class PbftForkResolver(ForkResolverInterface):
     # Provides the fork resolution interface for the BlockValidator to use
     # when deciding between 2 forks.
     def __init__(self,

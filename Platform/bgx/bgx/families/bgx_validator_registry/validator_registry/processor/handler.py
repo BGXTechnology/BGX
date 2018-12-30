@@ -222,6 +222,7 @@ class BgxValidatorRegistryTransactionHandler(TransactionHandler):
                             context):
 
         # Verify the attestation verification report signature
+        """
         proof_data_dict = json.loads(signup_info.proof_data)
         verification_report = proof_data_dict.get('verification_report')
         if verification_report is None:
@@ -230,7 +231,7 @@ class BgxValidatorRegistryTransactionHandler(TransactionHandler):
         signature = proof_data_dict.get('signature')
         if signature is None:
             raise ValueError('Signature is missing from proof data')
-
+        """
         # Try to get the report key from the configuration setting.  If it
         # is not there or we cannot parse it, fail verification.
         LOGGER.debug('get the report key from the configuration setting')
@@ -288,7 +289,8 @@ class BgxValidatorRegistryTransactionHandler(TransactionHandler):
                 hashes.SHA256())
         except InvalidSignature:
             raise ValueError('Verification report signature is invalid')
-        """
+        
+
         verification_report_dict = json.loads(verification_report)
         LOGGER.debug('before verification_report_dict')
 
@@ -311,7 +313,7 @@ class BgxValidatorRegistryTransactionHandler(TransactionHandler):
                         epid_pseudonym,
                         signup_info.anti_sybil_id))
 
-        """
+        
         # Verify that the verification report contains a PSE manifest status
         # and it is OK
         pse_manifest_status = verification_report_dict.get('pseManifestStatus')
@@ -334,14 +336,14 @@ class BgxValidatorRegistryTransactionHandler(TransactionHandler):
         pse_manifest_hash = verification_report_dict.get('pseManifestHash')
         if pse_manifest_hash is None:
             raise ValueError('Verification report does not contain a PSE manifest hash')
-        """
+        
         LOGGER.debug('before evidence_payload')
 
         # Verify that the proof data contains evidence payload
         evidence_payload = proof_data_dict.get('evidence_payload')
         if evidence_payload is None:
             raise ValueError('Evidence payload is missing from proof data')
-        """
+        
         # Verify that the evidence payload contains a PSE manifest and then
         # use it to make sure that the PSE manifest hash is what we expect
         pse_manifest = evidence_payload.get('pse_manifest')
@@ -354,37 +356,11 @@ class BgxValidatorRegistryTransactionHandler(TransactionHandler):
                     'PSE manifest hash {0} does not match {1}'.format(
                         pse_manifest_hash,
                         expected_pse_manifest_hash))
-        """
+        
         # Verify that the verification report contains an enclave quote and
         # that its status is OK
         LOGGER.debug('before isvEnclaveQuoteStatus')
-        """
-        enclave_quote_status = verification_report_dict.get('isvEnclaveQuoteStatus')
-        if enclave_quote_status is None:
-            raise ValueError(
-                    'Verification report does not contain an enclave quote '
-                    'status')
-        if enclave_quote_status.upper() != 'OK':
-            if enclave_quote_status.upper() == 'GROUP_OUT_OF_DATE':
-                LOGGER.warning('Peer has out of date (but not revoked)'
-                               ' hardware, isvEnclaveQuoteStatus: %s',
-                               str(enclave_quote_status))
-            else:
-                raise \
-                    ValueError(
-                        'Enclave quote status is {} (i.e., not OK)'.format(
-                            enclave_quote_status))
-
-        # Verify that the verification report contains an enclave quote
-        enclave_quote = verification_report_dict.get('isvEnclaveQuoteBody')
-        if enclave_quote is None:
-            raise ValueError('Verification report does not contain an enclave quote')
-
-        # The ISV enclave quote body is base 64 encoded, so decode it and then
-        # create an SGX quote structure from it so we can inspect
-        sgx_quote = sgx_structs.SgxQuote()
-        sgx_quote.parse_from_bytes(base64.b64decode(enclave_quote))
-
+     
         # The report body should be SHA256(SHA256(OPK)|PPK)
         #
         # NOTE - since the code that created the report data is in the enclave
@@ -433,12 +409,14 @@ class BgxValidatorRegistryTransactionHandler(TransactionHandler):
         # Verify that the nonce in the verification report matches the nonce
         # in the transaction payload submitted
         LOGGER.debug('before nonce')
+        """
         nonce = verification_report_dict.get('nonce', '')
         if nonce != val_reg_payload.signup_info.nonce:
             raise ValueError(
                     'AVR nonce [{0}] does not match signup info nonce [{1}]'.format(
                         nonce,
                         val_reg_payload.signup_info.nonce))
+        """
 
     def apply(self, transaction, context):
         txn_header = transaction.header

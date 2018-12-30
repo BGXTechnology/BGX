@@ -1,36 +1,34 @@
-# Copyright 2018 NTRlab
+
+# Copyright 2018 NTRlab (https://ntrlab.ru)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+#      http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# -----------------------------------------------------------------------------
+#
+# Author: Mikhail Kashchenko
+
 
 import logging
 import sys
 import json
 from web3 import Web3, HTTPProvider
 from sawtooth_sdk.processor.exceptions import InternalError
-from smart_bgt.processor.token import Token, MetaToken
-from collections import namedtuple
+from smart_bgt.processor.token import Token
 
 LOGGER = logging.getLogger(__name__)
-
-# Listener class for Ethereum
 
 class BGXlistener:
     
     DECAir = '{}'
     DECOwn = '{}'
-
-    # returns balance of wallet_address for a contract with address CONTRACT_ADDRESS
     def balanceOf(wallet_address):
         DEC_ADDRESS = "0xA442f92796E756dA0b8d4AA88552131A042A9d0E"
         CONTRACT_ADDRESS = "0x1046154E52152411f3DA880661B2E5E4a6fb86E8" #'0xa442f92796e756da0b8d4aa88552131a042a9d0e' # '0x11Ce8357fa42Dc336778381865a7ED1c76b38C4a'
@@ -79,97 +77,65 @@ class BGXConf:
     DEFAULT_STORAGE_PATH = './'
     MAX_RETRY_CREATE_DB = 10
 
-# Storage class for an allowance information
 
-class AllowanceRow:
+class BGXwallet():
 
-    def __init__(self, spender_addr, json_string=None):
-        self.__storage = {}
-        self.__spender_addr = spender_addr
-        if json_string is not None:
-            self.from_json(json_string)
+    def __init__(self):
+        self._tokens = {}
 
-    def get_id(self):
-        return self.__spender_addr
+    def append(self, token):
+        if not isinstance(token, Token):
+            LOGGER.error("BGXwallet append - wrong args")
+            raise InternalError('Failed to append token')
 
-    def append(self, addr, group_id, value):
-        self.__storage[addr + group_id] = value
+        key = token.getGroupId()
+        self._tokens[key] = token.toJSON()
 
-    def get(self, addr, group_id):
-        key = addr + group_id
-        if key not in self.__storage:
-            return 0
-        return self.__storage[key]
-
-    def to_json(self):
-        return json.dumps(self.__storage)
-
-    def from_json(self, json_string):
-        try:
-            data = json.loads(json_string)
-        except:
-            LOGGER.error('Cant read json: %s', sys.exc_info()[0])
-            raise InternalError('Failed to load data')
-        
-        for key, value in data.items():
-            self.__storage[key] = value
-
-# Prototype of storage class for a work with Sawtooth storage cells.
-# Storable objects in cell must have get_id() and to_json() methods
-
-class StorageCell():
-
-    def __init__(self, json_string = None):
-        self._storage = {}
-        if json_string is not None:
-            self.from_json(json_string)
-
-    def append(self, obj):
-        key = obj.get_id()
-        self._storage[key] = obj.to_json()
-
-    def to_json(self):
-        return json.dumps(self._storage)
-
-    def from_json(self, json_string):
-        try:
-            data = json.loads(json_string)
-        except:
-            LOGGER.error('Cant read json: %s', sys.exc_info()[0])
-            raise InternalError('Failed to load data')
-
-        for k, v in data.items():
-            self._storage[k] = v
-
-    # get row with allowance info from storage cell
-    def get(self, obj_id):
-        if obj_id not in self._storage:
-            allowance_row = AllowanceRow(obj_id)
-            return allowance_row
+    def get_token(self, token_id):
+        if token_id not in self._tokens:
+            max_token = Token()
+            cur_token = Token()
+            for token_id in self._tokens.keys():
+                token_str = self._tokens[token_id]
+                cur_token.fromJSON(token_str)
+                if max_token.getBalance() < cur_token.getBalance():
+                    max_token = cur_token
+            return max_token
         else:
-            json_str = self._storage[obj_id]
-            del self._storage[obj_id]
-            allowance_row = AllowanceRow(obj_id, json_str)
-            return allowance_row
-
-    # get meta token from storage cell
-    def get_meta_token(self, obj_id):
-        if obj_id not in self._storage:
-            return None
-        else:
-            json_str = self._storage[obj_id]
-            del self._storage[obj_id]
-            meta_token = MetaToken(json_string=json_str)
-            return meta_token
-
-    # get token from storage cell
-    def get_token(self, obj_id, strictly=None):
-        if obj_id not in self._storage:
-            res = Token() if strictly is True else None
-            return res
-        else:
-            json_str = self._storage[obj_id]
-            del self._storage[obj_id]
-            token = Token(json_string=json_str)
+            token_str = self._tokens[token_id]
+            del self._tokens[token_id]
+            token = Token()
+            token.fromJSON(token_str)
             return token
 
+    def strictly_get_token(self, token_id):
+        if token_id not in self._tokens:
+            return None
+        else:
+            token_str = self._tokens[token_id]
+            del self._tokens[token_id]
+            token = Token()
+            token.fromJSON(token_str)
+            return token
+
+    def get_balance(self):
+        balance = {}
+        cur_token = Token()
+        for token_id in self._tokens.keys():
+            token_str = self._tokens[token_id]
+            cur_token.fromJSON(token_str)
+            balance[token_id] = cur_token.get_amount()
+        return balance
+
+    def toJSON(self):
+        return json.dumps(self._tokens)
+
+    def fromJSON(self, json_string):
+        try:
+            data = json.loads(json_string)
+        except:
+            LOGGER.error('Cant read json with BGXwallet: %s', sys.exc_info()[0])
+            raise InternalError('Failed to load BGXwallet')
+
+        for k, v in data.items():
+            self._tokens[k] = v

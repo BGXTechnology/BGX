@@ -1,11 +1,16 @@
 {
-	"net_structure":{
+    "groups":[
+      {"name" : "Activity","field" : "node_state","list":[]},
+      {"name" : "Type","field" : "node_type","list":[]}
+    ],
+    "net_structure":{
 			"parent_node": 
 			{
 				"public_key": "02f2068c16fe9fd0ffcc1da19fd98add24c89c6c5b6c080a1895ee53b565d5cf6c",
 				"IP": "192.168.1.1",
 				"port": 8080,
 				"node_type": "leader",
+                "node_type_desc": "Leader",
 				"node_state": "active",
 				"children":[
 					{
@@ -13,6 +18,7 @@
 						"IP": "192.168.1.2",
 						"port": 8080,
 						"node_type": "plink",
+                        "node_type_desc": "Permalink",
 						"node_state": "inactive",
                         "children": []
 					},
@@ -21,7 +27,8 @@
 						"IP": "192.168.1.3",
 						"port": 8080,
 						"node_type": "aux",
-						"node_state": "active",
+                        "node_type_desc": "Secondary",
+						"node_state": "inactive",
                         "children": []
 					}
                     ,{
@@ -29,6 +36,7 @@
                         "IP": "192.168.1.3",
                         "port": 8080,
                         "node_type": "plink",
+                        "node_type_desc": "Permalink",
                         "node_state": "inactive",
                         "children":[
                             {
@@ -36,6 +44,7 @@
                                 "IP": "192.168.1.5",
                                 "port": 8080,
                                 "node_type": "plink",
+                                "node_type_desc": "Permalink",
                                 "node_state": "inactive",
                                 "children": []
                             },
@@ -44,7 +53,8 @@
                                 "IP": "192.168.1.6",
                                 "port": 8080,
                                 "node_type": "aux",
-                                "node_state": "active",
+                                "node_type_desc": "Secondary",
+                                "node_state": "inactive",
                                 "children": []
                             }
                         ]
@@ -54,21 +64,23 @@
         				"IP": "192.168.1.7",
         				"port": 8080,
         				"node_type": "aux",
-        				"node_state": "active",
+        				"node_state": "inactive",
         				"children":[
         					{
         						"public_key": "02f2068c16fe9fd0ffcc1da19fd98add24c89c6c5b6c080a1895ee53b565d5cf67",
         						"IP": "192.168.1.8",
         						"port": 8080,
         						"node_type": "plink",
-        						"node_state": "inactive"
+                                "node_type_desc": "Permalink",
+        						"node_state": "active"
         					},
         					{
         						"public_key": "02f2068c16fe9fd0ffcc1da19fd98add24c89c6c5b6c080a1895ee53b565d5cf68",
         						"IP": "192.168.1.9",
         						"port": 8080,
         						"node_type": "aux",
-        						"node_state": "active"
+                                "node_type_desc": "Secondary",
+        						"node_state": "inactive"
         					}
         				]
 			       }
@@ -77,13 +89,15 @@
         				"IP": "192.168.1.10",
         				"port": 8080,
         				"node_type": "arbiter",
-        				"node_state": "active",
+                        "node_type_desc": "Arbiter",
+        				"node_state": "inactive",
         				"children":[
         					{
         						"public_key": "02f2068c16fe9fd0ffcc1da19fd98add24c89c6c5b6c080a1895ee53b565d5cf6a",
         						"IP": "192.168.1.11",
         						"port": 8080,
         						"node_type": "plink",
+                                "node_type_desc": "Permalink",
         						"node_state": "inactive"
         					},
         					{
@@ -91,6 +105,7 @@
         						"IP": "192.168.1.12",
         						"port": 8080,
         						"node_type": "aux",
+                                "node_type_desc": "Secondary",
         						"node_state": "inactive"
         					}
         				]

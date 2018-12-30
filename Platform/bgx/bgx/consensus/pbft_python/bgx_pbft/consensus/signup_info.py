@@ -145,7 +145,7 @@ class SignupInfo:
             The encoded PBFT public key corresponding to private key used by
             PBFT to sign wait certificates.
         """
-        return pbft_enclave_module.release_signup_data(sealed_signup_data)
+        return None #pbft_enclave_module.release_signup_data(sealed_signup_data)
 
     def __init__(self, enclave_signup_info):
         LOGGER.debug("SignupInfo::__init__ %s",enclave_signup_info)
