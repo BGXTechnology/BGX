@@ -56,7 +56,7 @@ class ValidatorRegistryView:
             for address, state_data in leaves
             if address != validator_map_addr
         ]
-        #LOGGER.debug("get_validators(%s)",infos)
+        LOGGER.debug("get_validators(%s)",infos)
         return {info.id: info for info in infos}
 
     def has_validator_info(self, validator_id):

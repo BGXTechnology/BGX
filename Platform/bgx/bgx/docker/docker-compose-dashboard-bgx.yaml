@@ -5,7 +5,7 @@ services:
   bgx-dashboard:
     build:
       context: ../..
-      dockerfile: bgx/dashboard/Dockerfile-${DISTR}
+      dockerfile: bgx/rest-api/Dockerfile-${DISTR}
       args:
         - http_proxy
         - https_proxy

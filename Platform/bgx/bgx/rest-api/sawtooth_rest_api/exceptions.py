@@ -303,16 +303,3 @@ class ReceiptIdQueryInvalid(_ApiError):
     message = ("Requests for transaction receipts sent as a GET request must "
                "have an 'id' query parameter with a comma-separated list of "
                "at least one transaction id.")
-
-class WalletNotFound(_ApiError):
-    api_code = 90
-    status_code = 400
-    title = "User's wallet not found"
-    message = ''
-
-class BadWalletAddress(_ApiError):
-    api_code = 91
-    status_code = 400
-    title = "Bad wallet addres"
-    message = ''
-

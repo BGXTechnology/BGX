@@ -20,7 +20,6 @@ import json
 import base64
 import hashlib
 import random
-from datetime import datetime
 
 from aiohttp import web
 
@@ -68,11 +67,7 @@ def _sha512(data):
     return hashlib.sha512(data).hexdigest()
 
 def _base64url2public(addr):
-    try:
-        return base64.urlsafe_b64decode(addr).decode("utf-8") 
-    except :
-        raise errors.BadWalletAddress()
-        
+    return base64.urlsafe_b64decode(addr).decode("utf-8")
 
 def _public2base64url(key):
     return base64.urlsafe_b64encode(key.encode()).decode('utf-8')
@@ -191,19 +186,6 @@ class BgxRouteHandler(RouteHandler):
             amount    = amount + coin(token)
         return coin_code,amount
 
-    async def get_meta_token(self,request,coin_code = 'bgt'):
-        """
-        get meta token with label coin_code and corresponding wallet
-        now use SMART_BGT_META as coin_code - FIX IT 
-        """
-        meta_token = await self._get_state_by_addr(request,SMART_BGT_META)
-        if meta_token is None:
-            return meta_token,''
-        # create wallet and present some few token
-        meta = json.loads(meta_token[SMART_BGT_META])
-        LOGGER.debug('BgxRouteHandler:get_meta_token=%s key=%s',meta,meta[SMART_BGT_CREATOR_KEY])
-        return meta_token,meta[SMART_BGT_CREATOR_KEY]
-         
 
     def _wrap_error(self,request,code,mesg,title = 'Error'):
         return self._wrap_response(
@@ -216,7 +198,7 @@ class BgxRouteHandler(RouteHandler):
                         status=code
                         )
 
-    async def _make_token_transfer(self,request,address_from,address_to,num_bgt,coin_code='bgt'):
+    async def _make_token_transfer(self,request,address_from,address_to,num_bgt):
         """
         Make transfer from wallet to wallet
         """
@@ -226,7 +208,7 @@ class BgxRouteHandler(RouteHandler):
             'Name'   : address_from,
             'to_addr': address_to,
             'num_bgt': num_bgt,
-            'group_id' : coin_code
+            'group_id' : 'group_code'
         })
         LOGGER.debug('BgxRouteHandler: _make_token_transfer make payload=%s',payload_bytes)
         in_address = make_smart_bgt_address(address_from)
@@ -276,7 +258,7 @@ class BgxRouteHandler(RouteHandler):
 
         except KeyError:
             raise errors.BadTransactionPayload()
-        coin_code    = payload['coin_code'] if 'coin_code' in payload else None
+
         # Verification of signed hashes
         """
         result = rest_api_utils.verify_signature(public_key_from, signed_payload, payload)
@@ -285,18 +267,10 @@ class BgxRouteHandler(RouteHandler):
         """
 
         address_from =  _base64url2public(address_from)
-        try:
-            address_to   =  _base64url2public(address_to)
-        except errors.BadWalletAddress:
-            LOGGER.debug('BgxRouteHandler: post_transfer  BadWalletAddress= %s',address_to)
-            meta_token,meta_wallet = await self.get_meta_token(request,coin_code)
-            if meta_token is None:
-                raise errors.BadWalletAddress()
-            LOGGER.debug('BgxRouteHandler: post_transfer to META WALLET=%s',meta_wallet)
-            address_to = meta_wallet
-        
+        address_to   =  _base64url2public(address_to)
+
         LOGGER.debug('BgxRouteHandler: post_transaction make payload=%s',payload)
-        link = await self._make_token_transfer(request,address_from,address_to,num_bgt,coin_code)
+        link = await self._make_token_transfer(request,address_from,address_to,num_bgt)
         status = 202
 
         retval = self._wrap_response(
@@ -314,7 +288,10 @@ class BgxRouteHandler(RouteHandler):
         """
         address = request.match_info.get('address', '')
         LOGGER.debug('BgxRouteHandler: get_wallet address=%s type=%s',address,type(address))
-        address =  _base64url2public(address)
+        try:
+            address =  _base64url2public(address)
+        except :
+            return self._wrap_error(request,400,'Bad wallet address.')
 
         LOGGER.debug('BgxRouteHandler: get_wallet public=(%s) type=%s',address,type(address))
         result = await self._get_state_by_addr(request,address)
@@ -359,11 +336,13 @@ class BgxRouteHandler(RouteHandler):
         wallet = await self._get_state_by_addr(request,public_key)
         if wallet is None:
             LOGGER.debug('BgxRouteHandler:post_wallet CREATE NEW WALLET') 
-            meta_token,meta_wallet = await self.get_meta_token(request)
+            meta_token = await self._get_state_by_addr(request,SMART_BGT_META)
             if meta_token is not None:
-                # create wallet and present some few 'bgt' token as default 
+                # create wallet and present some few token
+                meta = json.loads(meta_token[SMART_BGT_META])
+                LOGGER.debug('BgxRouteHandler:post_wallet meta=%s key=%s',meta,meta[SMART_BGT_CREATOR_KEY]) 
                 # make transfer to new wallet
-                link = await self._make_token_transfer(request,meta_wallet,public_key,SMART_BGT_PRESENT_AMOUNT)
+                link = await self._make_token_transfer(request,meta[SMART_BGT_CREATOR_KEY],public_key,SMART_BGT_PRESENT_AMOUNT)
                 LOGGER.debug('BgxRouteHandler:post_wallet link=%s',link) 
                 # SHOULD DO waiting until wallet was created
                 #wallet = await self._get_state_by_addr(request,public_key)
@@ -414,105 +393,10 @@ class BgxRouteHandler(RouteHandler):
         """
         DONT USE now instead list_transactions handler
         """
-        LOGGER.debug('list_transactions for validator')
-
-        paging_controls = self._get_paging_controls(request)
-        validator_query = client_transaction_pb2.ClientTransactionListRequest(
-            head_id=self._get_head_id(request),
-            transaction_ids=self._get_filter_ids(request),
-            sorting=self._get_sorting_message(request, "default"),
-            paging=self._make_paging_message(paging_controls))
-
-        response = await self._query_validator(
-            Message.CLIENT_TRANSACTION_LIST_REQUEST,
-            client_transaction_pb2.ClientTransactionListResponse,
-            validator_query)
-
-        data = [self._expand_transaction(t) for t in response['transactions']]
-
-        transactions = [cbor.loads(base64.b64decode(tx['payload'])) for tx in data]
-        # transactions = list(filter(lambda tx: 'Verb' in tx and tx['Verb'] == 'transfer',
-        #                            [cbor.loads(base64.b64decode(tx['payload'])) for tx in data]))
-
-        result_list = []
-        for tx in transactions:
-            if not isinstance(tx, dict) or \
-                    'Verb' not in tx or \
-                    tx['Verb'] != 'transfer':
-                continue
-            result_tx = {
-                    'timestamp': datetime.now().__str__(),
-                    'status': True,
-                    'tx_payload': tx['num_bgt'],
-                    'currency': tx['group_id'],
-                    'address_from': tx['Name'],
-                    'address_to': tx['to_addr'],
-                    'fee': 0.1,
-                    'extra': 'extra information'
-                }
-            try:
-                result_tx['address_from'] = _public2base64url(result_tx['address_from'])
-            except:
-                pass
-
-            try:
-                result_tx['address_to'] = _public2base64url(result_tx['address_to'])
-            except:
-                pass
-
-            result_list.append(result_tx)
-
-        LOGGER.debug('get_global_transactions result_list=%s',result_list)
-        return self._wrap_paginated_response(
-            request=request,
-            response=response,
-            controls=paging_controls,
-            data = None,
-            usermeta={
-                'transactions': result_list
-            })
-
-    async def post_add_funds(self, request):
-        body = await request.json()
-
-        if 'data' not in body:
-            raise errors.NoTransactionPayload()
-
-        data = body['data']
-        try:
-            signed_payload = data['signed_payload']
-            payload = data['payload']
-            address_to = payload['address_to']
-            reason = payload['reason']
-            bgt_num = payload['tx_payload']
-            coin_code = payload['coin_code']
-
-
-        except KeyError:
-            raise errors.BadTransactionPayload()
-
-        
-        LOGGER.debug('BgxRouteHandler:post_add_funds payload(%s)',payload)    
-        public_key_to =  _base64url2public(address_to)
-        wallet = await self._get_state_by_addr(request,public_key_to)
-        if wallet is None:
-            LOGGER.debug('BgxRouteHandler:post_add_funds wallet(%s) not found',address_to)
-            raise errors.WalletNotFound()
-        # check emmission
-        meta_token,meta_wallet = await self.get_meta_token(request,coin_code)
-        if meta_token is not None:
-            LOGGER.debug('BgxRouteHandler:post_add_funds key=%s bgt_num=%s reason=%s',meta_wallet,bgt_num,reason) 
-            # make transfer to  public_key_to wallet
-            link = await self._make_token_transfer(request,meta_wallet,public_key_to,bgt_num,coin_code)
-        else:
-            return self._wrap_error(request,400,'Emmission must be done before')
-        # Verification of signed hashes
-        #result = rest_api_utils.verify_signature(public_key_to, signed_payload, payload)
-        #if result != 1:
-        #    raise errors.InvalidSignature()
-
         return self._wrap_response(
             request,
-            metadata=link,
+            metadata={
+                'transactions': []
+            },
             status=200)
 

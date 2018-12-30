@@ -1,4 +1,4 @@
-# Copyright 2016, 2018 NTRlab
+# Copyright 2018 NTRlab
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,7 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+
 
 import argparse
 import getpass
@@ -34,8 +35,6 @@ from smart_bgt.client_cli.load import add_load_parser
 from smart_bgt.client_cli.load import do_load
 from smart_bgt.client_cli.smart_bgt_workload import add_workload_parser
 from smart_bgt.client_cli.smart_bgt_workload import do_workload
-
-
 
 from smart_bgt.client_cli.exceptions import SmartBgtCliException
 from smart_bgt.client_cli.exceptions import SmartBgtClientException
@@ -112,7 +111,9 @@ def create_parser(prog_name):
 
     add_init_parser(subparsers, parent_parser)
     add_transfer_parser(subparsers, parent_parser)
+    add_transfer_bgx_parser(subparsers, parent_parser)
     add_allowance_parser(subparsers, parent_parser)
+    add_approve_parser(subparsers, parent_parser)
     add_generate_key_parser(subparsers, parent_parser)
     add_show_parser(subparsers, parent_parser)
     add_list_parser(subparsers, parent_parser)
@@ -129,7 +130,7 @@ def create_parser(prog_name):
 
 
 def add_init_parser(subparsers, parent_parser):
-    message = 'Sends an bgt transaction to init <name> to <value>.'
+    message = 'Sends bgt transaction to generate <token_name> token.'
 
     parser = subparsers.add_parser(
         'init',
@@ -138,12 +139,7 @@ def add_init_parser(subparsers, parent_parser):
         help='Make BGT emission')
 
     parser.add_argument(
-        'full_name',
-        type=str,
-        help='')
-
-    parser.add_argument(
-        'private_key',
+        'token_name',
         type=str,
         help='')
 
@@ -186,7 +182,7 @@ def add_init_parser(subparsers, parent_parser):
 
 
 def add_transfer_parser(subparsers, parent_parser):
-    message = 'Sends an num_bgt transaction to transfer <from_addr> to <to_addr>.'
+    message = 'Transfers token <group_id> from <from_addr> to <to_addr>.'
 
     parser = subparsers.add_parser(
         'transfer',
@@ -232,22 +228,118 @@ def add_transfer_parser(subparsers, parent_parser):
         help='set time, in seconds, to wait for transaction to commit')
 
 
-def add_allowance_parser(subparsers, parent_parser):
-    message = 'Check: try to send an num_bgt from <from_addr>.'
+
+def add_transfer_bgx_parser(subparsers, parent_parser):
+    message = 'Changes num_bgt tokens with type <from_group> to type <to_group>.'
 
     parser = subparsers.add_parser(
-        'allowance',
+        'transfer_bgx',
         parents=[parent_parser],
         description=message,
-        help='Check BGT transfer')
+        help='Make BGT transfer_bgx')
 
     parser.add_argument(
-        'from_addr',
+        'addr',
+        type=str,
+        help='')
+
+    parser.add_argument(
+        'from_group',
+        type=str,
+        help='')
+
+    parser.add_argument(
+        'to_group',
         type=str,
         help='')
 
     parser.add_argument(
         'num_bgt',
+        type=str,
+        help='')
+
+    parser.add_argument(
+        '--url',
+        type=str,
+        help='specify URL of REST API')
+
+    parser.add_argument(
+        '--keyfile',
+        type=str,
+        help="identify file containing user's private key")
+
+    parser.add_argument(
+        '--wait',
+        nargs='?',
+        const=sys.maxsize,
+        type=int,
+        help='set time, in seconds, to wait for transaction to commit')
+
+
+def add_allowance_parser(subparsers, parent_parser):
+    message = 'Returns the amount which _spender is still allowed to withdraw from _owner.'
+
+    parser = subparsers.add_parser(
+        'allowance',
+        parents=[parent_parser],
+        description=message,
+        help='')
+
+    parser.add_argument(
+        'user_addr',
+        type=str,
+        help='')
+
+    parser.add_argument(
+        'spender_addr',
+        type=str,
+        help='')
+
+    parser.add_argument(
+        'group_id',
+        type=str,
+        help='')
+
+    parser.add_argument(
+        '--url',
+        type=str,
+        help='specify URL of REST API')
+
+    parser.add_argument(
+        '--keyfile',
+        type=str,
+        help="identify file containing user's private key")
+
+    parser.add_argument(
+        '--wait',
+        nargs='?',
+        const=sys.maxsize,
+        type=int,
+        help='set time, in seconds, to wait for transaction to commit')
+
+
+def add_approve_parser(subparsers, parent_parser):
+    message = 'Allow _spender to withdraw from your account, multiple times, up to the _value amount. If this function \
+               is called again it overwrites the current allowance with _value.'
+
+    parser = subparsers.add_parser(
+        'approve',
+        parents=[parent_parser],
+        description=message,
+        help='')
+
+    parser.add_argument(
+        'user_addr',
+        type=str,
+        help='')
+
+    parser.add_argument(
+        'spender_addr',
+        type=str,
+        help='')
+
+    parser.add_argument(
+        'value',
         type=str,
         help='')
 
@@ -386,10 +478,11 @@ def add_show_parser(subparsers, parent_parser):
 
 
 def do_init(args):
-    full_name, private_key, ethereum_address, num_bgt, bgt_price, dec_price, wait  = args.full_name, \
-        args.private_key, args.ethereum_address, args.num_bgt, args.bgt_price, args.dec_price, args.wait
+    token_name, ethereum_address, num_bgt, bgt_price, dec_price, wait = args.token_name, args.ethereum_address, \
+                                                                        args.num_bgt, args.bgt_price, args.dec_price, \
+                                                                        args.wait
     client = _get_client(args)
-    response = client.init(full_name, private_key, ethereum_address, num_bgt, bgt_price, dec_price, wait)
+    response = client.init(token_name, ethereum_address, num_bgt, bgt_price, dec_price, wait)
     print(response)
 
 
@@ -400,10 +493,24 @@ def do_transfer(args):
     print(response)
 
 
-def do_allowance(args):
-    from_addr, num_bgt, group_id, wait = args.from_addr, args.num_bgt, args.group_id, args.wait
+def do_transfer_bgx(args):
+    addr, from_group, to_group, num_bgt, wait = args.addr, args.from_group, args.to_group, args.num_bgt, args.wait
     client = _get_client(args)
-    response = client.allowance(from_addr, num_bgt, group_id, wait)
+    response = client.transfer_bgx(addr, from_group, to_group, num_bgt, wait)
+    print(response)
+
+def do_allowance(args):
+    user_addr, spender_addr, group_id, wait = args.user_addr, args.spender_addr, args.group_id, args.wait
+    client = _get_client(args)
+    response = client.allowance(user_addr, spender_addr, group_id, wait)
+    print(response)
+
+
+def do_approve(args):
+    user_addr, spender_addr, value, group_id, wait = args.user_addr, args.spender_addr, args.value, args.group_id, \
+                                                     args.wait
+    client = _get_client(args)
+    response = client.approve(user_addr, spender_addr, value, group_id, wait)
     print(response)
 
 
@@ -502,8 +609,12 @@ def main(prog_name=os.path.basename(sys.argv[0]), args=None):
         get_total_supply(args)
     elif args.command == 'transfer':
         do_transfer(args)
+    elif args.command == 'transfer_bgx':
+        do_transfer_bgx(args)
     elif args.command == 'allowance':
         do_allowance(args)
+    elif args.command == 'approve':
+        do_approve(args)
     elif args.command == 'generate_key':
         do_generate_key(args)
     elif args.command == 'show':

@@ -754,7 +754,7 @@ class RouteHandler:
 
     @classmethod
     def _wrap_paginated_response(cls, request, response, controls, data,
-                                 head=None,usermeta=None):
+                                 head=None):
         """Builds the metadata for a pagingated response and wraps everying in
         a JSON encoded web.Response
         """
@@ -772,18 +772,16 @@ class RouteHandler:
         start = controls.get("start")
         paging["limit"] = limit
         paging["start"] = start
-        envelope = usermeta or {}
-        envelope['head'] = head
-        envelope['link'] = link
-        envelope['paging'] = paging 
-        
         # If there are no resources, there should be nothing else in paging
         if paging_response.get("next") == "":
             return cls._wrap_response(
                 request,
                 data=data,
-                metadata=envelope
-                )
+                metadata={
+                    'head': head,
+                    'link': link,
+                    'paging': paging
+                })
 
         next_id = paging_response['next']
         paging['next_position'] = next_id

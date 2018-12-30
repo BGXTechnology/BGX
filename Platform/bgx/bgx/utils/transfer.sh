@@ -6,4 +6,4 @@ num=$3
 num=${num:=1}
 post="{\"data\": {\"payload\" : {\"address_from\": \"${from}\",\"address_to\":\"${to}\",\"tx_payload\" : ${num}},\"signed_payload\": \"\"}}"
 echo POST  $post
-curl -X POST -d "$post" http://localhost:8008/transactions
+curl -X POST -d "$post" http://localhost:8002/transactions

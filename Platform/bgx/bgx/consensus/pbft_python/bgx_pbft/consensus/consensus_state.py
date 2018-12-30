@@ -123,7 +123,7 @@ class ConsensusState:
             consensus_state_store (ConsensusStateStore): The consensus state
                 store that is used to store interim consensus state created
                 up to resulting consensus state
-            
+            pbft_enclave_module (module): The PBFT enclave module
 
         Returns:
             ConsensusState object representing the consensus state for the
@@ -139,10 +139,8 @@ class ConsensusState:
         # created consensus state
         current_id = block_id
         while True:
-            LOGGER.debug("ConsensusState: ASK block for id=%s",current_id)
             block = ConsensusState._block_for_id(block_id=current_id,block_cache=block_cache)
             if block is None:
-                LOGGER.debug("ConsensusState: walk to ROOT block_id=%s",current_id)
                 break
 
             # Try to fetch the consensus state.  If that succeeds, we can
@@ -150,9 +148,9 @@ class ConsensusState:
             # state.
             consensus_state = consensus_state_store.get(block_id=current_id)
             if consensus_state is not None:
-                LOGGER.debug("ConsensusState: FOUND CONSENSUS_STATE=%s for block_id=%s",consensus_state,current_id)
+                LOGGER.debug("ConsensusState: CONSENSUS_STATE=%s",consensus_state)
                 break
-            """
+
             wait_certificate = utils.deserialize_wait_certificate(block=block,pbft_enclave_module=pbft_enclave_module)
 
             # If this is a PBFT block (i.e., it has a wait certificate), get
@@ -176,7 +174,6 @@ class ConsensusState:
             # placeholder in the list so that when we get to it we know that we
             # need to reset the statistics.
             elif not blocks or previous_wait_certificate is not None:
-                LOGGER.debug('ConsensusState:: not blocks or previous_wait_certificate is not None')
                 blocks[current_id] = \
                     ConsensusState._BlockInfo(
                         wait_certificate=None,
@@ -184,28 +181,25 @@ class ConsensusState:
                         pbft_settings_view=None)
 
             previous_wait_certificate = wait_certificate
-            """
+
             # Move to the previous block
             current_id = block.previous_block_id
 
         # At this point, if we have not found any consensus state, we need to
         # create default state from which we can build upon
         if consensus_state is None:
-            LOGGER.debug("ConsensusState: EMPTY CONSENSUS_STATE for block_id=%s",current_id)
             consensus_state = ConsensusState()
 
         # Now, walk through the blocks for which we were supposed to create
         # consensus state, from oldest to newest (i.e., in the reverse order in
         # which they were added), and store state for PBFT blocks so that the
         # next time we don't have to walk so far back through the block chain.
-        LOGGER.debug("ConsensusState: reversed(blocks.items() blocks=%s",blocks.items())
         for current_id, block_info in reversed(blocks.items()):
             # If the block was not a PBFT block (i.e., didn't have a wait
             # certificate), reset the consensus state statistics.  We are not
             # going to store this in the consensus state store, but we will use
             # it as the starting for the next PBFT block.
             if block_info.wait_certificate is None:
-                LOGGER.debug("ConsensusState: CONSENSUS_STATE block_info.wait_certificate is None")
                 consensus_state = ConsensusState()
 
             # Otherwise, let the consensus state update itself appropriately
@@ -224,12 +218,13 @@ class ConsensusState:
                     pbft_settings_view=block_info.pbft_settings_view)
                 consensus_state_store[current_id] = consensus_state
 
-                LOGGER.debug('Create consensus state: SAVE BID=%s, ALM=%f, TBCC=%d',
+                LOGGER.debug(
+                    'Create consensus state: BID=%s, ALM=%f, TBCC=%d',
                     current_id[:8],
                     consensus_state.aggregate_local_mean,
                     consensus_state.total_block_claim_count)
 
-        LOGGER.debug("ConsensusState: return CONSENSUS_STATE=%s done",consensus_state)
+        LOGGER.debug("ConsensusState: CONSENSUS_STATE=%s done",consensus_state)
         return consensus_state
 
     def __init__(self):

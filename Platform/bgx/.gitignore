@@ -134,10 +134,6 @@
 /bgx/dashboard/build
 /bgx/dashboard/sawtooth_rest_api/protobuf
 /bgx/dashboard/sawtooth_rest_api/__pycache__
-/bgx/validator/build/
-/bgx/validator/sawtooth_validator.egg-info/
-/bgx/validator/sawtooth_validator/protobuf/
-/bgx/validator/**/__pycache__/
 *.vpj
 *.vpw
 *.vtg

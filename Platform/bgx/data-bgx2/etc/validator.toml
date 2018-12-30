@@ -27,9 +27,9 @@
 # of strings in the format "option:endpoint", where the options are currently
 # network and component.
 bind = [
-  "network:tcp://validator-bgx-2:8801",
-  "component:tcp://127.0.0.1:4006",
-  "consensus:tcp://127.0.0.1:5051"
+  "network:tcp://validator-2:8801",
+  "component:tcp://127.0.0.1:4004",
+  "consensus:tcp://127.0.0.1:5050"
 ]
 
 # The type of peering approach the validator should take. Choices are 'static'
@@ -40,7 +40,7 @@ bind = [
 peering = "static"
 
 # Advertised network endpoint URL.
-endpoint = "tcp://validator-bgx-2:8801"
+endpoint = "tcp://validator-2:8801"
 
 # Uri(s) to connect to in order to initially connect to the validator network,
 # in the format tcp://hostname:port. This is not needed in static peering mode
@@ -49,7 +49,7 @@ endpoint = "tcp://validator-bgx-2:8801"
 
 # A list of peers to attempt to connect to in the format tcp://hostname:port.
 # It defaults to None. Replace host1 with the peer's hostname or IP address.
- peers = ["tcp://validator-bgx:8800"]
+ peers = ["tcp://validator:8800"]
 
 # The type of scheduler to use. The choices are 'serial' or 'parallel'.
 scheduler = 'serial'

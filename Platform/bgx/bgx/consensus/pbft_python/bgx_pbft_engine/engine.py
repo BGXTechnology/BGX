@@ -85,10 +85,10 @@ class PbftEngine(Engine):
 
 
     def _check_consensus(self, block):
-        #if not self._is_peer_connected :
-        #s    return True
+        if not self._is_peer_connected :
+            return True
         self._start_consensus(block)
-        return True
+        return False
 
     def _start_consensus(self, block):
         return self._oracle.start_consensus(self._node,block)

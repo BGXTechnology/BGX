@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import hashlib
 import base64
@@ -31,7 +31,7 @@ from sawtooth_sdk.protobuf.batch_pb2 import BatchList
 from sawtooth_sdk.protobuf.batch_pb2 import BatchHeader
 from sawtooth_sdk.protobuf.batch_pb2 import Batch
 from smart_bgt.client_cli.exceptions import SmartBgtClientException
-from smart_bgt.processor.utils import FAMILY_NAME,FAMILY_VER
+from smart_bgt.processor.utils import FAMILY_NAME,FAMILY_VER,SMART_BGT_META_ADDRESS,ALLOWANCE_INFO
 from smart_bgt.processor.crypto import BGXCrypto
 
 
@@ -61,37 +61,50 @@ class SmartBgtClient:
             self._signer = CryptoFactory(
                 create_context('secp256k1')).new_signer(private_key)
 
-
-    def init(self, full_name, private_key, ethereum_address,num_bgt,bgt_price,dec_price, wait=None):
+    def init(self, token_name, ethereum_address, num_bgt, bgt_price, dec_price, wait=None):
         args = {
-            'Name': full_name,
-            'private_key': private_key,
+            'token_name': token_name,
             'ethereum_address': ethereum_address,
             'num_bgt': num_bgt,
             'bgt_price': bgt_price,
-            'dec_price':dec_price,
+            'dec_price': dec_price,
         }
         return self._send_transaction('init', args, wait=wait)
 
-
-    def transfer(self, from_addr, to_addr, num_bgt, group_id='None', wait=None):
+    def transfer(self, from_addr, to_addr, num_bgt, group_id, wait=None):
         args = {
-            'Name': from_addr,
+            'from_addr': from_addr,
             'to_addr': to_addr,
             'num_bgt': num_bgt,
             'group_id': group_id,
         }
         return self._send_transaction('transfer', args, wait=wait)
 
-
-    def allowance(self, from_addr, num_bgt, group_id='None', wait=None):
+    def transfer_bgx(self, addr, from_group, to_group, num_bgt, wait=None):
         args = {
-            'Name': from_addr,
+            'addr': addr,
+            'from_group': from_group,
+            'to_group': to_group,
             'num_bgt': num_bgt,
+        }
+        return self._send_transaction('transfer_bgx', args, wait=wait)
+
+    def allowance(self, user_addr, spender_addr, group_id, wait=None):
+        args = {
+            'user_addr': user_addr,
+            'spender_addr': spender_addr,
             'group_id': group_id,
         }
         return self._send_transaction('allowance', args, wait=wait)
 
+    def approve(self, user_addr, spender_addr, value, group_id, wait=None):
+        args = {
+            'user_addr': user_addr,
+            'spender_addr': spender_addr,
+            'value': value,
+            'group_id': group_id,
+        }
+        return self._send_transaction('approve', args, wait=wait)
 
     def balance_of(self, addr, wait=None):
         args = {
@@ -197,25 +210,36 @@ class SmartBgtClient:
         args['Verb'] = verb
         payload = cbor.dumps(args)
         inputs = []
-        outputs= []
+        outputs = []
 
-        # Construct the address 0281e398fc978e8d36d6b2244c71e140f3ee464cb4c0371a193bb0a5c6574810ba
-        if verb != 'generate_key' and verb != 'balance_of' and verb != 'total_supply':
-            address = self._get_address(args['Name'])
-            inputs = [address]
-            outputs= [address]
+        # load meta information
+        meta_tokens_address = self._get_address(SMART_BGT_META_ADDRESS)
+        inputs.append(meta_tokens_address)
+        outputs.append(meta_tokens_address)
 
-        if verb == 'init':
-            private_key = args['private_key']
-            digital_signature = BGXCrypto.DigitalSignature(private_key)
-            open_key = digital_signature.getVerifyingKey()
-            address2 = self._get_address(open_key)
-            inputs.append(address2)
-            outputs.append(address2)
-        elif verb == 'transfer':
-            address1 = self._get_address(args['to_addr'])
-            inputs.append(address1)
-            outputs.append(address1)
+        # load info about validator
+        validator_digital_signature = BGXCrypto.get_validator_signature()
+        verifying_key = validator_digital_signature.get_verifying_key()
+        validator_address = self._get_address(verifying_key)
+        inputs.append(validator_address)
+        outputs.append(validator_address)
+
+        # load information about allowance
+        allowance_address = self._get_address(ALLOWANCE_INFO)
+        inputs.append(allowance_address)
+        outputs.append(allowance_address)
+
+        if verb == 'transfer':
+            address_from = self._get_address(args['from_addr'])
+            address_to = self._get_address(args['to_addr'])
+            inputs.append(address_from)
+            outputs.append(address_from)
+            inputs.append(address_to)
+            outputs.append(address_to)
+        elif verb == 'transfer_bgx':
+            address = self._get_address(args['addr'])
+            inputs.append(address)
+            outputs.append(address)
         elif verb == 'balance_of':
             address = self._get_address(args['addr'])
             inputs = [address]
@@ -271,7 +295,6 @@ class SmartBgtClient:
             "batches", batch_list.SerializeToString(),
             'application/octet-stream',
         )
-
 
     def _create_batch_list(self, transactions):
         transaction_signatures = [t.header_signature for t in transactions]
