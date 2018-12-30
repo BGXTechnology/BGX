@@ -26,6 +26,7 @@ from enum import Enum
 from sawtooth_validator.concurrent.thread import InstrumentedThread
 from sawtooth_validator.protobuf.network_pb2 import DisconnectMessage
 from sawtooth_validator.protobuf.network_pb2 import GossipMessage
+from sawtooth_validator.protobuf.network_pb2 import GossipConsensusMessage
 from sawtooth_validator.protobuf.network_pb2 import GossipBatchByBatchIdRequest
 from sawtooth_validator.protobuf.network_pb2 import \
     GossipBatchByTransactionIdRequest
@@ -73,6 +74,7 @@ class Gossip(object):
     def __init__(self, network,
                  settings_cache,
                  current_root_func,
+                 consensus_notifier,
                  endpoint=None,
                  peering_mode='static',
                  initial_seed_endpoints=None,
@@ -129,6 +131,7 @@ class Gossip(object):
         self._topology_check_frequency = topology_check_frequency
         self._settings_cache = settings_cache
         self._current_root_func = current_root_func
+        self._consensus_notifier = consensus_notifier
 
         self._topology = None
         self._peers = {}
@@ -179,6 +182,11 @@ class Gossip(object):
         with self._lock:
             return copy.copy(self._peers)
 
+    def peer_to_public_key(self, peer):
+        """Returns the public key for the associated peer."""
+        with self._lock:
+            return self._network.connection_id_to_public_key(peer)
+
     def register_peer(self, connection_id, endpoint):
         """Registers a connected connection_id.
 
@@ -203,6 +211,10 @@ class Gossip(object):
                         self._maximum_peer_connectivity,
                         endpoint))
 
+        public_key = self.peer_to_public_key(connection_id)
+        if public_key:
+            self._consensus_notifier.notify_peer_connected(public_key)
+
     def unregister_peer(self, connection_id):
         """Removes a connection_id from the registry.
 
@@ -210,6 +222,10 @@ class Gossip(object):
             connection_id (str): A unique identifier which identifies an
                 connection on the network server socket.
         """
+        public_key = self.peer_to_public_key(connection_id)
+        if public_key:
+            self._consensus_notifier.notify_peer_disconnected(public_key)
+
         with self._lock:
             if connection_id in self._peers:
                 del self._peers[connection_id]
@@ -232,8 +248,9 @@ class Gossip(object):
             )
         return int(time_to_live)
 
-    def broadcast_block(self, block, exclude=None):
-        time_to_live = self.get_time_to_live()
+    def broadcast_block(self, block, exclude=None, time_to_live=None):
+        if time_to_live is None:
+            time_to_live = self.get_time_to_live()
         gossip_message = GossipMessage(
             content_type=GossipMessage.BLOCK,
             content=block.SerializeToString(),
@@ -263,8 +280,9 @@ class Gossip(object):
                   connection_id,
                   one_way=True)
 
-    def broadcast_batch(self, batch, exclude=None):
-        time_to_live = self.get_time_to_live()
+    def broadcast_batch(self, batch, exclude=None, time_to_live=None):
+        if time_to_live is None:
+            time_to_live = self.get_time_to_live()
         gossip_message = GossipMessage(
             content_type=GossipMessage.BATCH,
             content=batch.SerializeToString(),
@@ -293,6 +311,25 @@ class Gossip(object):
         self.broadcast(
             batch_request,
             validator_pb2.Message.GOSSIP_BATCH_BY_BATCH_ID_REQUEST)
+
+    def send_consensus_message(self, peer_id, message, public_key):
+        connection_id = self._network.public_key_to_connection_id(peer_id)
+
+        self.send(
+            validator_pb2.Message.GOSSIP_CONSENSUS_MESSAGE,
+            GossipConsensusMessage(
+                message=message,
+                sender_id=public_key,
+                time_to_live=0).SerializeToString(),
+            connection_id)
+
+    def broadcast_consensus_message(self, message, public_key):
+        LOGGER.debug('Gossip: broadcast_consensus_message peers=%d',len(self._peers))
+        self.broadcast(
+            GossipConsensusMessage(
+                message=message,
+                time_to_live=self.get_time_to_live()),
+            validator_pb2.Message.GOSSIP_CONSENSUS_MESSAGE)
 
     def send(self, message_type, message, connection_id, one_way=False):
         """Sends a message via the network.
@@ -587,7 +624,7 @@ class ConnectionManager(InstrumentedThread):
                                     MAXIMUM_STATIC_RETRY_FREQUENCY),
                                 count=0)
 
-                    LOGGER.debug("attempting to peer with %s", endpoint)
+                    LOGGER.debug("retry_static_peering:attempting to peer with %s", endpoint)
                     self._network.add_outbound_connection(endpoint)
                     self._temp_endpoints[endpoint] = EndpointInfo(
                         EndpointStatus.PEERING,

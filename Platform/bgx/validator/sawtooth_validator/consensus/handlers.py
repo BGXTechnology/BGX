@@ -111,13 +111,13 @@ class ConsensusRegisterHandler(ConsensusServiceHandler):
         if startup_info is None:
             response.status = consensus_pb2.ConsensusRegisterResponse.NOT_READY
             return
-
+            
         chain_head = startup_info.chain_head
         peers = [bytes.fromhex(peer_id) for peer_id in startup_info.peers]
         local_peer_info = startup_info.local_peer_info
-
+        LOGGER.debug('ConsensusRegisterHandler: peers=%s local=%s chain_head[%s]=%s header=%s',peers,local_peer_info,type(chain_head),chain_head,type(chain_head.header))
         block_header = BlockHeader()
-        block_header.ParseFromString(chain_head.header)
+        block_header.ParseFromString(chain_head.header)  
 
         response.chain_head.block_id = bytes.fromhex(
             chain_head.header_signature)
@@ -226,6 +226,7 @@ class ConsensusSummarizeBlockHandler(ConsensusServiceHandler):
         try:
             LOGGER.debug('ConsensusSummarizeBlockHandler: proxy:summarize_block')
             summary = self._proxy.summarize_block()
+            LOGGER.debug('ConsensusSummarizeBlockHandler: proxy:summarize_block summary[%s]=%s',type(summary),summary)
             response.summary = summary
         except BlockNotInitialized:
             LOGGER.debug('ConsensusSummarizeBlockHandler: BlockNotInitialized')
@@ -253,8 +254,9 @@ class ConsensusFinalizeBlockHandler(ConsensusServiceHandler):
 
     def handle_request(self, request, response):
         try:
-            LOGGER.debug('ConsensusFinalizeBlockHandler: proxy:finalize_block')
+            LOGGER.debug('ConsensusFinalizeBlockHandler: proxy:finalize_block data[%s]=%s',type(request.data),request.data)
             response.block_id = self._proxy.finalize_block(request.data)
+            LOGGER.debug('ConsensusFinalizeBlockHandler: proxy:finalize_block response.block_id[%s]=%s',type(response.block_id),response.block_id)
         except BlockNotInitialized:
             response.status =\
                 consensus_pb2.ConsensusFinalizeBlockResponse.INVALID_STATE

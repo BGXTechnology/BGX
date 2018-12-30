@@ -1,0 +1,38 @@
+version: '3.6'
+
+services:
+
+  bgx-dashboard:
+    build:
+      context: ../..
+      dockerfile: bgx/dashboard/Dockerfile-${DISTR}
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
+        - BGX_TOP=bgx
+    image: bgx-dashboard
+    environment:
+    - SAWTOOTH_HOME=/project/${BGX_TOP}/data-bgx
+    volumes:
+      - ../..:/project/${BGX_TOP}
+    container_name: bgx-dashboard
+    networks:
+    - network1
+    ports:
+      - "8003:8003"
+    # depends_on:
+    #   - validator
+    command: |
+      bash -c "
+        bgx/bin/protogen
+        cd bgx/dashboard
+        python3 setup.py clean --all
+        python3 setup.py build
+        bgx-dashboard -vv  --connect tcp://localhost:4004 --bind bgx-dashboard:8003
+      "
+    stop_signal: SIGKILL
+
+networks:
+  network1:
+     name: bgx-net-dash

@@ -38,6 +38,10 @@
                         "node_type": "plink",
                         "node_type_desc": "Permalink",
                         "node_state": "inactive",
+                        "Cluster Info" : {
+                            "Clusters": "TacoBell AirPlans",
+                            "BGT name": "Tacos"
+                        },
                         "children":[
                             {
                                 "public_key": "02f2068c16fe9fd0ffcc1da19fd98add24c89c6c5b6c080a1895ee53b565d5cf64",

@@ -38,7 +38,7 @@ from sawtooth_validator.metrics.wrappers import CounterWrapper
 from sawtooth_validator.metrics.wrappers import GaugeWrapper
 
 from sawtooth_validator.state.merkle import INIT_ROOT_KEY
-
+from sawtooth_validator.protobuf.block_pb2 import Block
 
 LOGGER = logging.getLogger(__name__)
 
@@ -457,7 +457,7 @@ class BlockValidator(object):
             # get the current chain_head.
             self._chain_head = self._block_cache.block_store.chain_head
             self._result['chain_head'] = self._chain_head
-
+            LOGGER.info("BlockValidator::_chain_head=%s", self._chain_head)
             # 1) Find the common ancestor block, the root of the fork.
             # walk back till both chains are the same height
             (new_blkw, cur_blkw) = self._find_common_height(new_chain,
@@ -719,6 +719,7 @@ class ChainController(object):
         New block has been received, queue it with the chain controller
         for processing.
         """
+        LOGGER.debug("ChainController: queue block=%s",type(block))
         self._block_queue.put(block)
 
     @property
