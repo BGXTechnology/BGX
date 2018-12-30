@@ -38,5 +38,8 @@ class BroadcastBatchSender(BatchSender):
         self._gossip = gossip
 
     def send(self, batch):
+        """
+        send batch to others nodes and add it into own completer
+        """
         self._gossip.broadcast_batch(batch)
         self._completer.add_batch(batch)

@@ -306,7 +306,7 @@ class BlockPublisher(OwnedPointer):
         self._py_call('initialize_block', ctypes.py_object(block))
 
     def summarize_block(self, force=False):
-        LOGGER.debug('BlockPublisher: summarize_block')
+        #LOGGER.debug('BlockPublisher: summarize_block')
         (vec_ptr, vec_len, vec_cap) = ffi.prepare_vec_result()
         self._call(
             'summarize_block',

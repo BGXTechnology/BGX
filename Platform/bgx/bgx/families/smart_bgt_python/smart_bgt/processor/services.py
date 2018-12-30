@@ -49,7 +49,7 @@ class BGXlistener:
                 except:
                     LOGGER.debug('BGXlistener cant read json %s',sys.exc_info()[0])
 
-        if True :
+        if False :
             # Connecting to test net ropsten through infura
             infura_provider = HTTPProvider('https://ropsten.infura.io')
             web3 = Web3(infura_provider)
@@ -68,7 +68,10 @@ class BGXlistener:
             LOGGER.debug('WEB3 total=%s val=%s', total, val)
             return float(val)
         else:
-            return 0
+            total = 2000000000
+            val = 10000000.0
+            LOGGER.debug('WEB3 total=%s val=%s', total, val)
+            return val
 
 # Namespace for general configuration
 

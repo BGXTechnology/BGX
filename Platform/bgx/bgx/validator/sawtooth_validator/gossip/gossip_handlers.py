@@ -20,7 +20,9 @@ from sawtooth_validator.networking.dispatch import HandlerStatus
 from sawtooth_validator.protobuf import validator_pb2
 from sawtooth_validator.protobuf.batch_pb2 import Batch
 from sawtooth_validator.protobuf.block_pb2 import Block
+from sawtooth_validator.protobuf.consensus_pb2 import ConsensusPeerMessage
 from sawtooth_validator.protobuf.network_pb2 import GossipMessage
+from sawtooth_validator.protobuf.network_pb2 import GossipConsensusMessage
 from sawtooth_validator.protobuf.network_pb2 import GossipBlockResponse
 from sawtooth_validator.protobuf.network_pb2 import GossipBatchResponse
 from sawtooth_validator.protobuf.network_pb2 import GetPeersRequest
@@ -246,20 +248,43 @@ class GossipBroadcastHandler(Handler):
             gossip_message.time_to_live = time_to_live - 1
 
         if gossip_message.content_type == GossipMessage.BATCH:
+            """
+            batch from others nodes 
+            """
             batch = Batch()
             batch.ParseFromString(gossip_message.content)
             # If we already have this batch, don't forward it
             LOGGER.debug("GossipBroadcastHandler:handle BATCH !!!")
             if not self._completer.get_batch(batch.header_signature):
+                # this new batch for this node 
                 self._gossip.broadcast_batch(batch, exclude)
         elif gossip_message.content_type == GossipMessage.BLOCK:
-            LOGGER.debug("GossipBroadcastHandler:handle BLOCK !!!")
+            #LOGGER.debug("GossipBroadcastHandler:handle BLOCK !!!")
             block = Block()
             block.ParseFromString(gossip_message.content)
+            LOGGER.debug("GossipBroadcastHandler:handle BLOCK=%s!!!",block)
             # If we already have this block, don't forward it
             if not self._completer.get_block(block.header_signature):
+                LOGGER.debug("GossipBroadcastHandler:.broadcast_block!!!")
                 self._gossip.broadcast_block(block, exclude)
         else:
             LOGGER.info("received %s, not BATCH or BLOCK",
                         gossip_message.content_type)
+        return HandlerResult(status=HandlerStatus.PASS)
+
+
+class GossipConsensusMessageHandler(Handler):
+    def __init__(self, notifier):
+        self._notifier = notifier
+
+    def handle(self, connection_id, message_content):
+        gossip_message = GossipConsensusMessage()
+        gossip_message.ParseFromString(message_content)
+
+        peer_message = ConsensusPeerMessage()
+        peer_message.ParseFromString(gossip_message.message)
+
+        self._notifier.notify_peer_message(
+            message=peer_message,
+            sender_id=gossip_message.sender_id)
         return HandlerResult(status=HandlerStatus.PASS)

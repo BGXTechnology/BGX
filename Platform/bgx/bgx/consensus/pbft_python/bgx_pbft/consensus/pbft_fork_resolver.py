@@ -14,10 +14,8 @@
 # ------------------------------------------------------------------------------
 
 import logging
-
 from bgx_pbft.consensus.consensus_state import ConsensusState
 from bgx_pbft.consensus.consensus_state_store import ConsensusStateStore
-from bgx_pbft.consensus import pbft_enclave_factory as factory
 from bgx_pbft.consensus import utils
 from bgx_pbft.consensus.pbft_settings_view import PbftSettingsView
 from bgx_pbft.journal.block_wrapper import BlockWrapper
@@ -67,7 +65,7 @@ class PbftForkResolver(ForkResolverInterface):
         self._data_dir = data_dir
         self._config_dir = config_dir
         self._validator_id = validator_id
-        LOGGER.debug('BgtForkResolver:: ConsensusStateStore')
+        LOGGER.debug('PbftForkResolver:: ConsensusStateStore')
         self._consensus_state_store = ConsensusStateStore(data_dir=self._data_dir,validator_id=self._validator_id)
 
     def compare_forks(self, cur_fork_head, new_fork_head):
@@ -83,223 +81,47 @@ class PbftForkResolver(ForkResolverInterface):
             Boolean: True if the new chain should replace the current chain.
             False if the new chain should be discarded.
         """
-        chosen_fork_head = None
-
-        state_view = \
-            BlockWrapper.state_view_for_block(
-                block_wrapper=cur_fork_head,
-                state_view_factory=self._state_view_factory)
-        bgt_enclave_module = \
-            factory.BgtEnclaveFactory.get_bgt_enclave_module(
-                state_view=state_view,
-                config_dir=self._config_dir,
-                data_dir=self._data_dir)
-
-        current_fork_wait_certificate = \
-            utils.deserialize_wait_certificate(
-                block=cur_fork_head,
-                bgt_enclave_module=bgt_enclave_module)
-        new_fork_wait_certificate = \
-            utils.deserialize_wait_certificate(
-                block=new_fork_head,
-                bgt_enclave_module=bgt_enclave_module)
-
-        # If we ever get a new fork head that is not a PBFT block, then bail
-        # out.  This should never happen, but defensively protect against it.
-        if new_fork_wait_certificate is None:
+        # If the new fork head is not DevMode consensus, bail out.  This should
+        # never happen, but we need to protect against it.
+        LOGGER.debug('PbftForkResolver:: compare_forks new_fork_head.consensus=%s',new_fork_head.consensus)
+        if new_fork_head.consensus != b"pbft":
             raise \
                 TypeError(
-                    'New fork head {} is not a PBFT block'.format(
+                    'New fork head {} is not a Pbft block'.format(
                         new_fork_head.identifier[:8]))
 
-        # Criterion #1: If the current fork head is not PBFT, then check to see
-        # if the new fork head is building on top of it.  That would be okay.
-        # However if not, then we don't have a good deterministic way of
-        # choosing a winner.  Again, the latter should never happen, but
-        # defensively protect against it.
-        if current_fork_wait_certificate is None:
+        # If the current fork head is not DevMode consensus, check the new fork
+        # head to see if its immediate predecessor is the current fork head. If
+        # so that means that consensus mode is changing.  If not, we are again
+        # in a situation that should never happen, but we need to guard
+        # against.
+        if cur_fork_head.consensus != b"pbft":
             if new_fork_head.previous_block_id == cur_fork_head.identifier:
                 LOGGER.info(
-                    'Choose new fork %s over current fork %s: '
-                    'New fork head switches consensus to PBFT',
-                    new_fork_head.header_signature[:8],
-                    cur_fork_head.header_signature[:8])
-                chosen_fork_head = new_fork_head
-            else:
-                raise \
-                    TypeError(
-                        'Trying to compare a PBFT block {} to a non-PBFT '
-                        'block {} that is not the direct predecessor'.format(
-                            new_fork_head.identifier[:8],
-                            cur_fork_head.identifier[:8]))
+                    'PbftForkResolver::Choose new fork %s: New fork head switches consensus to '
+                    'Pbft',
+                    new_fork_head.identifier[:8])
+                return True
 
-        # Criterion #2: If they share the same immediate previous block,
-        # then the one with the smaller wait duration is chosen
-        elif cur_fork_head.previous_block_id == \
-                new_fork_head.previous_block_id:
-            if current_fork_wait_certificate.duration < \
-                    new_fork_wait_certificate.duration:
-                LOGGER.info(
-                    'Choose current fork %s over new fork %s: '
-                    'Current fork wait duration (%f) less than new fork wait '
-                    'duration (%f)',
-                    cur_fork_head.header_signature[:8],
-                    new_fork_head.header_signature[:8],
-                    current_fork_wait_certificate.duration,
-                    new_fork_wait_certificate.duration)
-                chosen_fork_head = cur_fork_head
-            elif new_fork_wait_certificate.duration < \
-                    current_fork_wait_certificate.duration:
-                LOGGER.info(
-                    'Choose new fork %s over current fork %s: '
-                    'New fork wait duration (%f) less than current fork wait '
-                    'duration (%f)',
-                    new_fork_head.header_signature[:8],
-                    cur_fork_head.header_signature[:8],
-                    new_fork_wait_certificate.duration,
-                    current_fork_wait_certificate.duration)
-                chosen_fork_head = new_fork_head
+            raise \
+                TypeError(
+                    'Trying to compare a Pbft block {} to a non-Pbft '
+                    'block {} that is not the direct predecessor'.format(
+                        new_fork_head.identifier[:8],
+                        cur_fork_head.identifier[:8]))
 
-        # Criterion #3: If they don't share the same immediate previous
-        # block, then the one with the higher aggregate local mean wins
+        if new_fork_head.block_num == cur_fork_head.block_num:
+            cur_fork_hash =self.hash_signer_public_key(
+                cur_fork_head.header.signer_public_key,
+                cur_fork_head.header.previous_block_id)
+            new_fork_hash = self.hash_signer_public_key(
+                new_fork_head.header.signer_public_key,
+                new_fork_head.header.previous_block_id)
+
+            result = new_fork_hash < cur_fork_hash
+
         else:
-            # Get the consensus state for the current fork head and the
-            # block immediately before the new fork head (as we haven't
-            # committed to the block yet).  So that the new fork doesn't
-            # have to fight with one hand tied behind its back, add the
-            # new fork head's wait certificate's local mean to the
-            # aggregate local mean for the predecessor block's consensus
-            # state for the comparison.
-            current_fork_consensus_state = \
-                ConsensusState.consensus_state_for_block_id(
-                    block_id=cur_fork_head.identifier,
-                    block_cache=self._block_cache,
-                    state_view_factory=self._state_view_factory,
-                    consensus_state_store=self._consensus_state_store,
-                    bgt_enclave_module=bgt_enclave_module)
-            new_fork_consensus_state = \
-                ConsensusState.consensus_state_for_block_id(
-                    block_id=new_fork_head.previous_block_id,
-                    block_cache=self._block_cache,
-                    state_view_factory=self._state_view_factory,
-                    consensus_state_store=self._consensus_state_store,
-                    bgt_enclave_module=bgt_enclave_module)
-            new_fork_aggregate_local_mean = \
-                new_fork_consensus_state.aggregate_local_mean + \
-                new_fork_wait_certificate.local_mean
+            result = new_fork_head.block_num > cur_fork_head.block_num
+        LOGGER.debug('PbftForkResolver:: compare_forks result=%s',result)
+        return result
 
-            if current_fork_consensus_state.aggregate_local_mean > \
-                    new_fork_aggregate_local_mean:
-                LOGGER.info(
-                    'Choose current fork %s over new fork %s: '
-                    'Current fork aggregate local mean (%f) greater than new '
-                    'fork aggregate local mean (%f)',
-                    cur_fork_head.header_signature[:8],
-                    new_fork_head.header_signature[:8],
-                    current_fork_consensus_state.aggregate_local_mean,
-                    new_fork_aggregate_local_mean)
-                chosen_fork_head = cur_fork_head
-            elif new_fork_aggregate_local_mean > \
-                    current_fork_consensus_state.aggregate_local_mean:
-                LOGGER.info(
-                    'Choose new fork %s over current fork %s: '
-                    'New fork aggregate local mean (%f) greater than current '
-                    'fork aggregate local mean (%f)',
-                    new_fork_head.header_signature[:8],
-                    cur_fork_head.header_signature[:8],
-                    new_fork_aggregate_local_mean,
-                    current_fork_consensus_state.aggregate_local_mean)
-                chosen_fork_head = new_fork_head
-
-        # Criterion #4: If we have gotten to this point and we have not chosen
-        # yet, we are going to fall back on using the block identifiers
-        # (header signatures) . The lexicographically larger one will be the
-        # chosen one.  The chance that they are equal are infinitesimally
-        # small.
-        if chosen_fork_head is None:
-            if cur_fork_head.header_signature > \
-                    new_fork_head.header_signature:
-                LOGGER.info(
-                    'Choose current fork %s over new fork %s: '
-                    'Current fork header signature (%s) greater than new fork '
-                    'header signature (%s)',
-                    cur_fork_head.header_signature[:8],
-                    new_fork_head.header_signature[:8],
-                    cur_fork_head.header_signature[:8],
-                    new_fork_head.header_signature[:8])
-                chosen_fork_head = cur_fork_head
-            else:
-                LOGGER.info(
-                    'Choose new fork %s over current fork %s: '
-                    'New fork header signature (%s) greater than current fork '
-                    'header signature (%s)',
-                    new_fork_head.header_signature[:8],
-                    cur_fork_head.header_signature[:8],
-                    new_fork_head.header_signature[:8],
-                    cur_fork_head.header_signature[:8])
-                chosen_fork_head = new_fork_head
-
-        # Now that we have chosen a fork for the chain head, if we chose the
-        # new fork and it is a PBFT block (i.e., it has a wait certificate),
-        # we need to create consensus state store information for the new
-        # fork's chain head.
-        if chosen_fork_head == new_fork_head:
-            # Get the state view for the previous block in the chain so we can
-            # create a PBFT enclave
-            previous_block = None
-            try:
-                previous_block = \
-                    self._block_cache[new_fork_head.previous_block_id]
-            except KeyError:
-                pass
-
-            state_view = \
-                BlockWrapper.state_view_for_block(
-                    block_wrapper=previous_block,
-                    state_view_factory=self._state_view_factory)
-
-            validator_registry_view = ValidatorRegistryView(state_view)
-            try:
-                # Get the validator info for the validator that claimed the
-                # fork head
-                validator_info = \
-                    validator_registry_view.get_validator_info(
-                        new_fork_head.header.signer_public_key)
-
-                # Get the consensus state for the new fork head's previous
-                # block, let the consensus state update itself appropriately
-                # based upon the validator claiming a block, and then
-                # associate the consensus state with the new block in the
-                # store.
-                consensus_state = ConsensusState.consensus_state_for_block_id(
-                        block_id=new_fork_head.previous_block_id,
-                        block_cache=self._block_cache,
-                        state_view_factory=self._state_view_factory,
-                        consensus_state_store=self._consensus_state_store,
-                        bgt_enclave_module=bgt_enclave_module)
-                consensus_state.validator_did_claim_block(
-                    validator_info=validator_info,
-                    wait_certificate=new_fork_wait_certificate,
-                    bgt_settings_view=BgtSettingsView(state_view))
-                self._consensus_state_store[new_fork_head.identifier] = \
-                    consensus_state
-
-                LOGGER.debug(
-                    'Create consensus state: BID=%s, ALM=%f, TBCC=%d',
-                    new_fork_head.identifier[:8],
-                    consensus_state.aggregate_local_mean,
-                    consensus_state.total_block_claim_count)
-            except KeyError:
-                # This _should_ never happen.  The new potential fork head
-                # has to have been a PBFT block and for it to be verified
-                # by the PBFT block verifier, it must have been signed by
-                # validator in the validator registry.  If not found, we
-                # are going to just stick with the current fork head.
-                LOGGER.error(
-                    'New fork head claimed by validator not in validator '
-                    'registry: %s...%s',
-                    new_fork_head.header.signer_public_key[:8],
-                    new_fork_head.header.signer_public_key[-8:])
-                chosen_fork_head = cur_fork_head
-
-        return chosen_fork_head == new_fork_head

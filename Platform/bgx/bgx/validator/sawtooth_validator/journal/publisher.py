@@ -767,7 +767,52 @@ class BlockPublisher(object):
                 return True
 
         return False
+    """
+    for proxy consensus interface
+    """
+    def initialize_block(self, block):
+        LOGGER.debug('BlockPublisher: initialize_block %s', block)
+        """
+        self._py_call('initialize_block', ctypes.py_object(block))
+        """
 
+    def summarize_block(self, force=False):
+        LOGGER.debug('BlockPublisher: summarize_block')
+        """
+        (vec_ptr, vec_len, vec_cap) = ffi.prepare_vec_result()
+        self._call(
+            'summarize_block',
+            ctypes.c_bool(force),
+            ctypes.byref(vec_ptr),
+            ctypes.byref(vec_len),
+            ctypes.byref(vec_cap))
+
+        return ffi.from_rust_vec(vec_ptr, vec_len, vec_cap)
+        """
+        return b'devmode'
+        #raise BlockEmpty()
+
+    def finalize_block(self, consensus=None, force=False):
+        LOGGER.debug('BlockPublisher: finalize_block consensus=%s',consensus)
+        """
+        (vec_ptr, vec_len, vec_cap) = ffi.prepare_vec_result()
+        self._call(
+            'finalize_block',
+            consensus, len(consensus),
+            ctypes.c_bool(force),
+            ctypes.byref(vec_ptr),
+            ctypes.byref(vec_len),
+            ctypes.byref(vec_cap))
+
+        return ffi.from_rust_vec(vec_ptr, vec_len, vec_cap).decode('utf-8')
+        """
+        return b'\xdb\x8c\xdc\x84\xfb]\xab\xca2\x1b\x18|J\x1d{\xee\xd9hd\xaf\xe2;N\xa4d\xf0\xb3\xc0\xe2\xf3\x97/S\x14~\x18My\xfd\xd2\x96Z\xbb\x858\x1f\x81\x86c\x85\x1b\xf7[s\xc5\xf1\x97\x94\xab\x89\x04^\x8e\xd4'.decode('utf-8')
+
+    def cancel_block(self):
+        LOGGER.debug('BlockPublisher: cancel_block')
+        """
+        self._call("cancel_block")
+        """
 
 class _RollingAverage(object):
 
@@ -789,3 +834,19 @@ class _RollingAverage(object):
         self._current_average = sum(self._samples) / len(self._samples)
 
         return self._current_average
+
+class BlockEmpty(Exception):
+    """There are no batches in the block."""
+
+class BlockInProgress(Exception):
+    """There is already a block in progress."""
+
+
+class BlockNotInitialized(Exception):
+    """There is no block in progress to finalize."""
+
+
+class MissingPredecessor(Exception):
+    """A predecessor was missing"""
+
+

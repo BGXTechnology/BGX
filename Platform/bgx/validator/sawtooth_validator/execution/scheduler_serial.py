@@ -152,6 +152,7 @@ class SerialScheduler(Scheduler):
                     self._last_in_batch.append(txn.header_signature)
                 self._txn_to_batch[txn.header_signature] = batch_signature
                 self._txn_queue.append(txn)
+            LOGGER.debug("SerialScheduler::add_batch notify_all batch_signature=%s.",batch_signature)
             self._condition.notify_all()
 
     def get_batch_execution_result(self, batch_signature):

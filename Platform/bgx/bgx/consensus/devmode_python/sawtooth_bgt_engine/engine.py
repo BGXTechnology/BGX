@@ -21,10 +21,11 @@ import json
 from sawtooth_sdk.consensus.engine import Engine
 from sawtooth_sdk.consensus import exceptions
 from sawtooth_sdk.protobuf.validator_pb2 import Message
+from sawtooth_sdk.protobuf.consensus_pb2 import ConsensusNotifyPeerConnected
 
 from sawtooth_bgt_engine.oracle import BgtOracle, BgtBlock
 from sawtooth_bgt_engine.pending import PendingForks
-
+from sawtooth_bgt_common.utils import _short_id
 
 LOGGER = logging.getLogger(__name__)
 
@@ -48,7 +49,7 @@ class BgtEngine(Engine):
 
     def name(self):
         LOGGER.debug('BgtEngine: ask name')
-        return 'Devmode'
+        return 'pbfts'
 
     def version(self):
         LOGGER.debug('BgtEngine: ask version')
@@ -60,7 +61,7 @@ class BgtEngine(Engine):
     def _initialize_block(self):
         LOGGER.debug('BgtEngine: _initialize_block')
         chain_head = self._get_chain_head()
-        LOGGER.debug('BgtEngine: _initialize_block ID=%s chain_head=%s',chain_head.block_id,chain_head)
+        LOGGER.debug('BgtEngine: _initialize_block ID=%s chain_head=%s',_short_id(chain_head.block_id.hex()),chain_head)
         #initialize = True #self._oracle.initialize_block(chain_head)
 
         #if initialize:
@@ -91,6 +92,7 @@ class BgtEngine(Engine):
         return switch
 
     def _check_block(self, block_id):
+        LOGGER.warning("_check_block: block_id=%s\n",_short_id(block_id.hex()))
         self._service.check_blocks([block_id])
 
     def _fail_block(self, block_id):
@@ -103,6 +105,7 @@ class BgtEngine(Engine):
         return BgtBlock(self._service.get_blocks([block_id])[block_id])
 
     def _commit_block(self, block_id):
+        LOGGER.warning("_commit_block: block_id=%s\n",_short_id(block_id.hex()))
         self._service.commit_block(block_id)
 
     def _ignore_block(self, block_id):
@@ -110,8 +113,10 @@ class BgtEngine(Engine):
 
     def _cancel_block(self):
         try:
+            LOGGER.warning("_cancel_block: \n")
             self._service.cancel_block()
         except exceptions.InvalidState:
+            LOGGER.warning("_cancel_block:  InvalidState\n")
             pass
 
     def _summarize_block(self):
@@ -138,10 +143,7 @@ class BgtEngine(Engine):
 
         try:
             block_id = self._service.finalize_block(consensus)
-            LOGGER.info(
-                'Finalized %s with %s',
-                block_id.hex(),
-                json.loads(consensus.decode()))
+            LOGGER.info('Finalized block=%s with %s',_short_id(block_id.hex()),json.loads(consensus.decode()))
             return block_id
         except exceptions.BlockNotReady:
             LOGGER.debug('Block not ready to be finalized')
@@ -165,7 +167,7 @@ class BgtEngine(Engine):
 
         try:
             block_id = self._service.finalize_block(consensus)
-            LOGGER.info('Finalized %s with ',block_id.hex()) #json.loads(consensus.decode())
+            LOGGER.info('Finalized block=%s with ',_short_id(block_id.hex())) #json.loads(consensus.decode())
             self._building = True
             # broadcast 
             #LOGGER.debug('broadcast ...')
@@ -262,7 +264,7 @@ class BgtEngine(Engine):
                 LOGGER.debug('BgtEngine: _finalize_block ..')
                 block_id = self._finalize_block()
                 if block_id:
-                    LOGGER.info("Published block %s", block_id.hex())
+                    LOGGER.info("Published block %s", _short_id(block_id.hex()))
                     self._published = True
                     self._building = False
                 else:
@@ -272,16 +274,17 @@ class BgtEngine(Engine):
 
     def _handle_new_block(self, block):
         block = BgtBlock(block)
-        LOGGER.info('handle_new_block:Received %s', block)
+        LOGGER.info('=> NEW_BLOCK:Received %s', _short_id(block.block_id.hex()))
 
         if self._check_consensus(block):
-            LOGGER.info('Passed consensus check: %s', block.block_id.hex())
+            LOGGER.info('Passed consensus check: %s', _short_id(block.block_id.hex()))
             self._check_block(block.block_id)
         else:
-            LOGGER.info('Failed consensus check: %s', block.block_id.hex())
+            LOGGER.info('Failed consensus check: %s', _short_id(block.block_id.hex()))
             self._fail_block(block.block_id)
 
     def _handle_valid_block(self, block_id):
+        LOGGER.info('handle_valid_block:Received %s', _short_id(block_id.hex()))
         block = self._get_block(block_id)
 
         self._pending_forks_to_resolve.push(block)
@@ -300,21 +303,18 @@ class BgtEngine(Engine):
     def _resolve_fork(self, block):
         chain_head = self._get_chain_head()
 
-        LOGGER.info(
-            'Choosing between chain heads -- current: %s -- new: %s',
-            chain_head.block_id.hex(),
-            block.block_id.hex())
+        LOGGER.info('Choosing between chain heads -- current: %s -- new: %s',_short_id(chain_head.block_id.hex()),_short_id(block.block_id.hex()))
 
         if self._switch_forks(chain_head, block):
-            LOGGER.info('Committing %s', block.block_id.hex())
+            LOGGER.info('Committing block=%s', _short_id(block.block_id.hex()))
             self._commit_block(block.block_id)
             self._committing = True
         else:
-            LOGGER.info('Ignoring %s', block.block_id.hex())
+            LOGGER.info('Ignoring block_%s', _short_id(block.block_id.hex()))
             self._ignore_block(block.block_id)
 
     def _handle_committed_block(self, block_id):
-        LOGGER.info('Chain head updated to %s, abandoning block in progress',block_id.hex())
+        LOGGER.info('=> BLOCK_COMMIT Chain head updated to %s, abandoning block in progress',_short_id(block_id.hex()))
 
         self._cancel_block()
 
@@ -326,9 +326,11 @@ class BgtEngine(Engine):
 
     def _handle_peer_connected(self, block):
         #block = BgtBlock(block)
-        LOGGER.info('_handle_peer_connected:Received %s', block)
+        pinfo = ConsensusNotifyPeerConnected()
+        #info = pinfo.ParseFromString(block)
+        LOGGER.info('_handle_peer_connected:Received %s', _short_id(block.peer_id.hex()))
 
     def _handle_peer_message(self, block):
         #block = BgtBlock(block)
-        LOGGER.info('_handle_peer_message:Received %s', block)
+        LOGGER.info('_handle_peer_message:Received %s', type(block))
 

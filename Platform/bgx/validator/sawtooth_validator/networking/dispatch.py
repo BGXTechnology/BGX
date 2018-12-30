@@ -144,9 +144,7 @@ class Dispatcher(InstrumentedThread):
         if message.message_type in self._msg_type_handlers:
             priority = self._priority.get(message.message_type, Priority.LOW)
             message_id = _gen_message_id()
-            LOGGER.info("Received a message of type %s priority %d from %s",
-                        get_enum_name(message.message_type),priority,
-                        connection_id)
+            #LOGGER.debug("Received a message of type %s priority %d from %s",get_enum_name(message.message_type),priority,connection_id)
             self._message_information[message_id] = \
                 _MessageInformation(
                     connection=connection,
@@ -160,7 +158,7 @@ class Dispatcher(InstrumentedThread):
             self._in_queue.put_nowait((priority, message_id))
 
             queue_size = self._in_queue.qsize()
-            LOGGER.info("Queue size %s",queue_size)
+            #LOGGER.info("Queue size %s",queue_size)
             if queue_size > 10:
                 LOGGER.debug("Dispatch incoming queue size: %s", queue_size)
         else:
@@ -278,7 +276,7 @@ class Dispatcher(InstrumentedThread):
 
         timer_tag = type(handler_manager.handler).__name__
         timer_ctx = self._get_dispatch_timer(timer_tag).time()
-        LOGGER.debug("_process_next:  timer_tag %s",timer_tag)
+        #LOGGER.debug("_process_next:  timer_tag %s",timer_tag)
         def do_next(result):
             timer_ctx.stop()
             try:
@@ -390,7 +388,7 @@ class Dispatcher(InstrumentedThread):
         while True:
             try:
                 _, msg_id = self._in_queue.get()
-                LOGGER.info("Dispatcher::run Have got MSG %s from queue",str(msg_id))
+                #LOGGER.info("Dispatcher::run Have got MSG %s from queue",str(msg_id))
                 if msg_id == -1:
                     break
                 self._process(msg_id)

@@ -16,6 +16,7 @@ from abc import ABCMeta
 from abc import abstractmethod
 import ctypes
 from enum import IntEnum
+import logging
 
 from sawtooth_validator import ffi
 from sawtooth_validator.ffi import PY_LIBRARY
@@ -25,6 +26,7 @@ from sawtooth_validator.ffi import OwnedPointer
 from sawtooth_validator.protobuf.block_pb2 import Block
 from sawtooth_validator.journal.block_wrapper import BlockStatus
 
+LOGGER = logging.getLogger(__name__)
 
 class ChainObserver(metaclass=ABCMeta):
     @abstractmethod
@@ -140,7 +142,7 @@ class ChainController(OwnedPointer):
         payload = ffi.from_rust_vec(vec_ptr, vec_len, vec_cap)
         block = Block()
         block.ParseFromString(payload)
-
+        LOGGER.debug("chain_head_fn  block=%s header=%s",type(block),type(block.header))
         return block
 
 

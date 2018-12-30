@@ -31,8 +31,10 @@ class PendingForks:
             self._queue.insert(0, block.block_id)
             self._blocks[block.block_id] = block
             return
-
-        del self._blocks[block.previous_id]
+        try:
+            del self._blocks[block.previous_id]
+        except KeyError:
+            pass
         self._queue[index] = block.block_id
         self._blocks[block.block_id] = block
 

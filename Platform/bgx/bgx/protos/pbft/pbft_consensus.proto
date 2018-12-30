@@ -35,6 +35,7 @@ message PbftMessageInfo {
       PREPARE_MSG = 1;
       COMMIT_MSG = 2;
       CHECKPOINT_MSG = 3;
+      VIEWCHANGE_MSG = 4;
   }
   // Message type
   PbftMessageType msg_type = 1;
@@ -56,7 +57,15 @@ message PbftMessage {
   // block info 
   PbftBlockMessage block = 2;
 }
+// PBFT LEADER change message
+message PbftViewChange {
+  // Message information
+  PbftMessageInfo info = 1;
 
+  // Set of `2f + 1` Checkpoint messages, proving correctness of stable
+  // Checkpoint mentioned in info's `seq_num`
+  //repeated PbftMessage checkpoint_messages = 2;
+}
 //message ConsensusRegisterResponse {
 //  enum Status {
 //    STATUS_UNSET = 0;

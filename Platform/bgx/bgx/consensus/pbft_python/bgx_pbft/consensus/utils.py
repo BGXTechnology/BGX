@@ -86,8 +86,7 @@ def get_previous_certificate_id(block_header,
     wait_certificate = None
 
     if not block_id_is_genesis(block_header.previous_block_id):
-        wait_certificate = deserialize_wait_certificate(
-                block=block_cache[block_header.previous_block_id],pbft_enclave_module=None) #pbft_enclave_module)
+        wait_certificate = deserialize_wait_certificate(block=block_cache[block_header.previous_block_id],pbft_enclave_module=None) 
 
     return \
         NULL_BLOCK_IDENTIFIER if wait_certificate is None \

@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ------------------------------------------------------------------------------
-
+import logging
 from sawtooth_validator.protobuf.block_pb2 import Block
-
+LOGGER = logging.getLogger(__name__)
 
 class BlockBuilder:
     """
@@ -43,6 +43,7 @@ class BlockBuilder:
         block = Block(header=header_bytes,
                       header_signature=self._header_signature)
         block.batches.extend(self.batches)
+        LOGGER.debug("BlockBuilder: NEW bloc =%s",block)
         return block
 
     @property

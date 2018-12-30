@@ -13,7 +13,7 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 """
-Utility methods used across enclave simulator.
+Utility methods .
 """
 
 import json

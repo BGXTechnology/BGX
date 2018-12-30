@@ -26,24 +26,28 @@ class PbftSettingsView:
     configuration view.  For values that are not in the current state view
     or that are invalid, default values are returned.
     """
-
+    _NODE_ = 'plink' 
+    _NODES_ = "{\"0281e398fc978e8d36d6b2244c71e140f3ee464cb4c0371a193bb0a5c6574810ba\": \"leader\",\"028c7e06db3af50a9958390e3e29f166b1cf6198586acf37cde46c8ea54e4a79ef\": \"plink\"}"
     _MAX_LOG_SIZE_ = 1000
-    _ENCLAVE_MODULE_NAME_ = 'bgx_pbft.enclave.pbft_enclave'
+    _BLOCK_DURATION_ = 200
+    _CHECKPOINT_PERIOD_ = 100
+    _VIEW_CHANGE_TIMEOUT_ = 4000
 
     def __init__(self, state_view):
         """Initialize a PbftSettingsView object.
-
         Args:
             state_view (StateView): The current state view.
-
         Returns:
             None
         """
 
         self._settings_view = SettingsView(state_view)
-
+        self._node = None
+        self._nodes = None
         self._max_log_size = None
-        self._enclave_module_name = None
+        self._block_duration = None
+        self._checkpoint_period = None
+        self._view_change_timeout = None
         self._signup_commit_maximum_delay = 2
         self._key_block_claim_limit = 2
         self._block_claim_delay = 2
@@ -105,23 +109,71 @@ class PbftSettingsView:
         return self._max_log_size
 
     @property
-    def enclave_module_name(self):
-        """Return the enclave module name if config setting exists and is
-        valid, otherwise return the default.
-
-        The enclave module name is the name of the Python module containing the
-        implementation of the underlying PBFT enclave.
+    def pbft_block_duration(self):
+        """Return the block_duration if config setting exists and is valid, otherwise return the default.
         """
-        if self._enclave_module_name is None:
-            self._enclave_module_name = \
-                self._get_config_setting(
-                    name='sawtooth.consensus.pbft.enclave_module_name',
+        if self._block_duration is None:
+            self._block_duration = self._get_config_setting(
+                    name='sawtooth.consensus.pbft.block_duration',
+                    value_type=int,
+                    default_value=PbftSettingsView._BLOCK_DURATION_,
+                    validate_function=lambda value: value >= 0)
+
+        return self._block_duration
+
+
+    @property
+    def pbft_checkpoint_period(self):
+        """Return the checkpoint_period if config setting exists and is valid, otherwise return the default.
+        """
+        if self._checkpoint_period is None:
+            self._block_duration = self._get_config_setting(
+                    name='sawtooth.consensus.pbft.checkpoint_period',
+                    value_type=int,
+                    default_value=PbftSettingsView._CHECKPOINT_PERIOD_,
+                    validate_function=lambda value: value >= 0)
+
+        return self._checkpoint_period
+    
+
+    @property
+    def pbft_view_change_timeout(self):
+        """Return the view_change_timeout if config setting exists and is valid, otherwise return the default.
+        """
+        if self._view_change_timeout is None:
+            self._view_change_timeout = self._get_config_setting(
+                    name='sawtooth.consensus.pbft.view_change_timeout',
+                    value_type=int,
+                    default_value=PbftSettingsView._VIEW_CHANGE_TIMEOUT_,
+                    validate_function=lambda value: value >= 0)
+
+        return self._view_change_timeout
+
+    @property
+    def pbft_node(self):
+        """Return node type.
+        """
+        if self._node is None:
+            self._node = self._get_config_setting(
+                    name='sawtooth.consensus.pbft.node',
                     value_type=str,
-                    default_value=PbftSettingsView._ENCLAVE_MODULE_NAME_,
-                    # function should return true if value is nonempty
+                    default_value=PbftSettingsView._NODE_,
                     validate_function=lambda value: value)
 
-        return self._enclave_module_name
+        return self._node
+
+    @property
+    def pbft_nodes(self):
+        """Return nodes list.
+        """
+        if self._nodes is None:
+            self._nodes = self._get_config_setting(
+                    name='sawtooth.consensus.pbft.nodes',
+                    value_type=str,
+                    default_value=PbftSettingsView._NODES_,
+                    validate_function=lambda value: value)
+
+        return self._nodes
 
     @property
     def signup_commit_maximum_delay(self):

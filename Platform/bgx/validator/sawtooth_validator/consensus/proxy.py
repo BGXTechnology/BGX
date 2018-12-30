@@ -13,11 +13,11 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
-
+import logging
 from collections import namedtuple
 
 from sawtooth_validator.protobuf.block_pb2 import BlockHeader
-
+LOGGER = logging.getLogger(__name__)
 
 class UnknownBlock(Exception):
     """The given block could not be found."""
@@ -77,8 +77,9 @@ class ConsensusProxy:
                     self._block_manager.get([previous_id.hex()]))
             except StopIteration:
                 raise UnknownBlock()
-            
+            LOGGER.debug('ConsensusProxy::initialize_block id=%s',previous_id.hex())
             self._block_publisher.initialize_block(previous_block)
+            LOGGER.debug('ConsensusProxy::initialize_block id=%s DONE',previous_id.hex())
         else:
             self._block_publisher.initialize_block(
                 self._chain_controller.chain_head)

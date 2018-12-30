@@ -39,7 +39,7 @@ from sawtooth_sdk.protobuf.validator_pb2 import Message
 from sawtooth_bgt.bgt_consensus.bgt_block_publisher import BgtBlockPublisher
 from sawtooth_bgt.bgt_consensus.bgt_block_verifier import BgtBlockVerifier
 from sawtooth_bgt.bgt_consensus.bgt_fork_resolver import BgtForkResolver
-
+from sawtooth_bgt_common.utils import _short_id
 
 LOGGER = logging.getLogger(__name__)
 
@@ -64,7 +64,7 @@ class BgtOracle:
 
         self._batch_publisher = _BatchPublisherProxy(stream, self._signer)
         self._publisher = None
-        LOGGER.debug('BgtOracle: init DONE')
+        LOGGER.debug('BgtOracle:validator=%s init DONE',_short_id(self._validator_id))
 
     def initialize_block(self, previous_block):
         block_header = NewBlockHeader(
@@ -101,11 +101,12 @@ class BgtOracle:
         '''"compare_forks" is not an intuitive name.'''
         LOGGER.debug('BgtOracle: switch_forks %s',cur_fork_head)
         if new_fork_head.block_num > cur_fork_head.block_num or (new_fork_head.block_num == cur_fork_head.block_num and new_fork_head.block_id > cur_fork_head.block_id) :
-            LOGGER.debug('BgtOracle: switch_forks new-num=%s cur-num=%s new-id=%s cur-id=%s',new_fork_head.block_num,cur_fork_head.block_num,new_fork_head.block_id,cur_fork_head.block_id)
+            LOGGER.debug('BgtOracle: switch_forks new-num=%s cur-num=%s new-id=%s cur-id=%s',new_fork_head.block_num,cur_fork_head.block_num,_short_id(new_fork_head.block_id.hex()),_short_id(cur_fork_head.block_id.hex()))
             return True
         elif new_fork_head.block_num < cur_fork_head.block_num :
             #
             chain_block = cur_fork_head
+            LOGGER.debug('BgtOracle: new_fork_head.block_num < cur_fork_head.block_num')
             while(True): 
                 chain_block = BgtBlock(self._service.get_blocks([chain_block.block_id])[chain_block.block_id]) 
                 if chain_block.block_num == new_fork_head.block_num :
@@ -129,7 +130,7 @@ class BgtOracle:
 class BgtBlock:
     def __init__(self, block):
         # fields that come with consensus blocks
-        LOGGER.debug('BgtBlock: block=%s',block)
+        
         self.block_id = block.block_id
         self.previous_id = block.previous_id
         self.signer_id = block.signer_id
@@ -146,7 +147,7 @@ class BgtBlock:
         self.header_signature = identifier
         self.previous_block_id = previous_block_id
         self.signer_public_key = signer_public_key
-
+        LOGGER.debug('BgtBlock: block=%s',_short_id(self.block_id.hex()))
         self.header = _DummyHeader(
             consensus=block.payload,
             signer_public_key=signer_public_key,
@@ -160,9 +161,9 @@ class BgtBlock:
             "Block("
             + ", ".join([
                 "block_num: {}".format(self.block_num),
-                "block_id: {}".format(self.block_id.hex()),
-                "previous_id: {}".format(self.previous_id.hex()),
-                "signer_id: {}".format(self.signer_id.hex()),
+                "block_id: {}".format(_short_id(self.block_id.hex())),
+                "previous_id: {}".format(_short_id(self.previous_id.hex())),
+                "signer_id: {}".format(_short_id(self.signer_id.hex())),
                 "payload: {}".format(self.payload),
                 "summary: {}".format(self.summary.hex()),
             ])

@@ -72,10 +72,11 @@ class ConsensusNotifier:
 
     def notify_block_new(self, block):
         """A new block was received and passed initial consensus validation"""
-        LOGGER.debug('ConsensusNotifier: notify_block_new block=%s',block)
+        LOGGER.debug('ConsensusNotifier: NOTIFY BLOCK_NEW block=%s',block)
         summary = hashlib.sha256()
         for batch in block.batches:
             summary.update(batch.header_signature.encode())
+        LOGGER.debug('ConsensusNotifier: NOTIFY BLOCK_NEW summary=%s block=%s',summary,block)
         block_header = BlockHeader()
         block_header.ParseFromString(block.header)
         self._notify(
@@ -91,7 +92,7 @@ class ConsensusNotifier:
 
     def notify_block_valid(self, block_id):
         """This block can be committed successfully"""
-        LOGGER.debug('ConsensusNotifier: notify_block_valid')
+        LOGGER.debug('ConsensusNotifier: NOTIFY BLOCK_VALID')
         self._notify(
             validator_pb2.Message.CONSENSUS_NOTIFY_BLOCK_VALID,
             consensus_pb2.ConsensusNotifyBlockValid(
@@ -99,7 +100,7 @@ class ConsensusNotifier:
 
     def notify_block_invalid(self, block_id):
         """This block cannot be committed successfully"""
-        c
+        LOGGER.debug('ConsensusNotifier: NOTIFY BLOCK_INVALID')
         self._notify(
             validator_pb2.Message.CONSENSUS_NOTIFY_BLOCK_INVALID,
             consensus_pb2.ConsensusNotifyBlockInvalid(
@@ -107,7 +108,7 @@ class ConsensusNotifier:
 
     def notify_block_commit(self, block_id):
         """This block has been committed"""
-        LOGGER.debug('ConsensusNotifier: notify_block_commit')
+        LOGGER.debug('ConsensusNotifier: NOTIFY BLOCK_COMMIT')
         self._notify(
             validator_pb2.Message.CONSENSUS_NOTIFY_BLOCK_COMMIT,
             consensus_pb2.ConsensusNotifyBlockCommit(

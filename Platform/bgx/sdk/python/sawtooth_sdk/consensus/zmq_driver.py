@@ -81,7 +81,7 @@ class ZmqDriver(Driver):
                     future = self._stream.receive()
                 except concurrent.futures.TimeoutError:
                     continue
-                LOGGER.debug('ZmqDriver: _driver_loop _process')
+                #LOGGER.debug('ZmqDriver: _driver_loop _process')
                 result = self._process(message)
 
                 self._updates.put(result)

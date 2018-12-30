@@ -20,15 +20,14 @@ from bgx_pbft.journal.consensus.consensus import BlockVerifierInterface
 
 from bgx_pbft.consensus.consensus_state import ConsensusState
 from bgx_pbft.consensus.consensus_state_store import ConsensusStateStore
-from bgx_pbft.consensus.bgt_settings_view import PbftSettingsView
-#from bgx_pbft.consensus import pbft_enclave_factory as factory
+from bgx_pbft.consensus.pbft_settings_view import PbftSettingsView
 from bgx_pbft.consensus import utils
 
 from bgx_pbft_common.validator_registry_view.validator_registry_view import ValidatorRegistryView
 
 LOGGER = logging.getLogger(__name__)
 
-
+_VREG_ = False
 class PbftBlockVerifier(BlockVerifierInterface):
     """BlockVerifier provides services for the Journal(ChainController) to
     determine if a block is valid (for the consensus rules) to be
@@ -93,52 +92,23 @@ class PbftBlockVerifier(BlockVerifierInterface):
         state_view = BlockWrapper.state_view_for_block(
                 block_wrapper=previous_block,
                 state_view_factory=self._state_view_factory)
-        """
-        bgt_enclave_module = \
-            factory.BgtEnclaveFactory.get_bgt_enclave_module(
-                state_view=state_view,
-                config_dir=self._config_dir,
-                data_dir=self._data_dir)
-        """ 
-        validator_registry_view = ValidatorRegistryView(state_view)
-        # Grab the validator info based upon the block signer's public
-        # key
-        try:
-            validator_info = \
-                validator_registry_view.get_validator_info(
-                    block_wrapper.header.signer_public_key)
-        except KeyError:
-            LOGGER.error(
-                'Block %s rejected: Received block from an unregistered '
-                'validator %s...%s',
-                block_wrapper.identifier[:8],
-                block_wrapper.header.signer_public_key[:8],
-                block_wrapper.header.signer_public_key[-8:])
-            return False
+        if _VREG_:
+            validator_registry_view = ValidatorRegistryView(state_view)
+            # Grab the validator info based upon the block signer's public
+            # key
+            try:
+                validator_info = validator_registry_view.get_validator_info(block_wrapper.header.signer_public_key)
+                LOGGER.debug('Block Signer Name=%s, ID=%s...%s PBFT',validator_info.name,validator_info.id[:8],validator_info.id[-8:])
+            except KeyError:
+                LOGGER.error(
+                    'Block %s rejected: Received block from an unregistered validator %s...%s num_transactions=%s',
+                    block_wrapper.identifier[:8],
+                    block_wrapper.header.signer_public_key[:8],
+                    block_wrapper.header.signer_public_key[-8:],
+                        block_wrapper.num_transactions)
+                    #return False
 
-        LOGGER.debug(
-            'Block Signer Name=%s, ID=%s...%s, PBFT public key='
-            '%s...%s',
-            validator_info.name,
-            validator_info.id[:8],
-            validator_info.id[-8:],
-            validator_info.signup_info.bgt_public_key[:8],
-            validator_info.signup_info.bgt_public_key[-8:])
-
-        # For the candidate block, reconstitute the wait certificate
-        # and verify that it is valid
-        wait_certificate = utils.deserialize_wait_certificate(
-                block=block_wrapper,
-                bgt_enclave_module=bgt_enclave_module)
-        if wait_certificate is None:
-            LOGGER.error(
-                'Block %s rejected: Block from validator %s (ID=%s...%s) was '
-                'not created by PBFT consensus module',
-                block_wrapper.identifier[:8],
-                validator_info.name,
-                validator_info.id[:8],
-                validator_info.id[-8:])
-            return False
+        
 
         # Get the consensus state and PBFT configuration view for the block
         # that is being built upon
@@ -147,81 +117,10 @@ class PbftBlockVerifier(BlockVerifierInterface):
                 block_cache=self._block_cache,
                 state_view_factory=self._state_view_factory,
                 consensus_state_store=self._consensus_state_store,
-                #bgt_enclave_module=bgt_enclave_module
                 )
+        LOGGER.debug('PbftBlockVerifier:: consensus_state=%s block_wrapper=(%s)',consensus_state,block_wrapper)
         pbft_settings_view = PbftSettingsView(state_view=state_view)
-
-        previous_certificate_id = utils.get_previous_certificate_id(
-                block_header=block_wrapper.header,
-                block_cache=self._block_cache,
-                bgt_enclave_module=bgt_enclave_module)
-        try:
-            wait_certificate.check_valid(
-                bgt_enclave_module=bgt_enclave_module,
-                previous_certificate_id=previous_certificate_id,
-                bgt_public_key=validator_info.signup_info.bgt_public_key,
-                consensus_state=consensus_state,
-                bgt_settings_view=bgt_settings_view)
-        except ValueError as error:
-            LOGGER.error(
-                'Block %s rejected: Wait certificate check failed - %s',
-                block_wrapper.identifier[:8],
-                error)
-            return False
-
-        # Reject the block if the validator signup information fails the
-        # freshness check.
-        if consensus_state.validator_signup_was_committed_too_late(
-                validator_info=validator_info,
-                bgt_settings_view=bgt_settings_view,
-                block_cache=self._block_cache):
-            LOGGER.error(
-                'Block %s rejected: Validator signup information not '
-                'committed in a timely manner.',
-                block_wrapper.identifier[:8])
-            return False
-
-        # Reject the block if the validator has already claimed the key block
-        # limit for its current PBFT key pair.
-        if consensus_state.validator_has_claimed_block_limit(
-                validator_info=validator_info,
-                bgt_settings_view=bgt_settings_view):
-            LOGGER.error(
-                'Block %s rejected: Validator has reached maximum number of '
-                'blocks with key pair.',
-                block_wrapper.identifier[:8])
-            return False
-
-        # Reject the block if the validator has not waited the required number
-        # of blocks between when the block containing its validator registry
-        # transaction was committed to the chain and trying to claim this
-        # block
-        if consensus_state.validator_is_claiming_too_early(
-                validator_info=validator_info,
-                block_number=block_wrapper.block_num,
-                validator_registry_view=validator_registry_view,
-                bgt_settings_view=bgt_settings_view,
-                block_store=self._block_cache.block_store):
-            LOGGER.error(
-                'Block %s rejected: Validator has not waited long enough '
-                'since registering validator information.',
-                block_wrapper.identifier[:8])
-            return False
-
-        # Reject the block if the validator is claiming blocks at a rate that
-        # is more frequent than is statistically allowed (i.e., zTest)
-        if consensus_state.validator_is_claiming_too_frequently(
-                validator_info=validator_info,
-                previous_block_id=block_wrapper.previous_block_id,
-                bgt_settings_view=bgt_settings_view,
-                population_estimate=wait_certificate.population_estimate(
-                    bgt_settings_view=bgt_settings_view),
-                block_cache=self._block_cache,
-                bgt_enclave_module=bgt_enclave_module):
-            LOGGER.error(
-                'Block %s rejected: Validator is claiming blocks too '
-                'frequently.',
-                block_wrapper.identifier[:8])
-            return False
-
-        return True
+        LOGGER.debug('PbftBlockVerifier:: pbft_settings_view=%s',pbft_settings_view)
+        return block_wrapper.header.consensus == b"pbft"
+    
+        
