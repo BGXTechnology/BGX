@@ -43,7 +43,7 @@ class ConsensusFactory(object):
                 'sawtooth_validator.journal.consensus.genesis.'
                 'genesis_consensus'
             )
-        elif module_name == 'devmode':
+        elif module_name in ['dev_mode', 'Devmode']:
             module_package = (
                 'sawtooth_validator.journal.consensus.dev_mode.'
                 'dev_mode_consensus'

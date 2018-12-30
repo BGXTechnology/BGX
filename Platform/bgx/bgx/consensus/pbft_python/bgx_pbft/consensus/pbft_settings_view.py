@@ -26,7 +26,7 @@ class PbftSettingsView:
     configuration view.  For values that are not in the current state view
     or that are invalid, default values are returned.
     """
-
+    _NODE_ = 'plink' 
     _MAX_LOG_SIZE_ = 1000
     _ENCLAVE_MODULE_NAME_ = 'bgx_pbft.enclave.pbft_enclave'
 
@@ -41,7 +41,7 @@ class PbftSettingsView:
         """
 
         self._settings_view = SettingsView(state_view)
-
+        self._node = None
         self._max_log_size = None
         self._enclave_module_name = None
         self._signup_commit_maximum_delay = 2
@@ -103,6 +103,20 @@ class PbftSettingsView:
                     validate_function=lambda value: value >= 0)
 
         return self._max_log_size
+    
+    #
+    @property
+    def pbft_node(self):
+        """Return node type.
+        """
+        if self._node is None:
+            self._node = self._get_config_setting(
+                    name='sawtooth.consensus.pbft.node',
+                    value_type=str,
+                    default_value=PbftSettingsView._NODE_,
+                    validate_function=lambda value: value)
+
+        return self._node
 
     @property
     def enclave_module_name(self):

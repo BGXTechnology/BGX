@@ -1,4 +1,4 @@
-# Copyright 2018 NTRlab
+# Copyright 2016 Intel Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,15 +11,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# -----------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 # pylint: disable=no-name-in-module
 from collections.abc import MutableMapping
 
-from sawtooth_validator.journal.block_wrapper import BlockStatus
-from sawtooth_validator.journal.block_wrapper import BlockWrapper
-from sawtooth_validator.protobuf.block_pb2 import Block
-from sawtooth_validator.state.merkle import INIT_ROOT_KEY
+from block_wrapper import BlockStatus
+from block_wrapper import BlockWrapper
+from block_pb2 import Block
+
+INIT_ROOT_KEY = '' #from sawtooth_validator.state.merkle import INIT_ROOT_KEY
 
 
 class BlockStore(MutableMapping):

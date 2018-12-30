@@ -14,10 +14,11 @@
 # ------------------------------------------------------------------------------
 
 import logging
-
+LOGGER = logging.getLogger(__name__)
+#LOGGER.debug('PbftForkResolver:: import start')
 from bgx_pbft.consensus.consensus_state import ConsensusState
 from bgx_pbft.consensus.consensus_state_store import ConsensusStateStore
-from bgx_pbft.consensus import pbft_enclave_factory as factory
+#from bgx_pbft.consensus import pbft_enclave_factory as factory
 from bgx_pbft.consensus import utils
 from bgx_pbft.consensus.pbft_settings_view import PbftSettingsView
 from bgx_pbft.journal.block_wrapper import BlockWrapper
@@ -83,24 +84,66 @@ class PbftForkResolver(ForkResolverInterface):
             Boolean: True if the new chain should replace the current chain.
             False if the new chain should be discarded.
         """
+        # If the new fork head is not DevMode consensus, bail out.  This should
+        # never happen, but we need to protect against it.
+        LOGGER.debug('BgtForkResolver:: compare_forks new_fork_head.consensus=%s',new_fork_head.consensus)
+        if new_fork_head.consensus != b"pbft":
+            raise \
+                TypeError(
+                    'New fork head {} is not a Pbft block'.format(
+                        new_fork_head.identifier[:8]))
+
+        # If the current fork head is not DevMode consensus, check the new fork
+        # head to see if its immediate predecessor is the current fork head. If
+        # so that means that consensus mode is changing.  If not, we are again
+        # in a situation that should never happen, but we need to guard
+        # against.
+        if cur_fork_head.consensus != b"pbft":
+            if new_fork_head.previous_block_id == cur_fork_head.identifier:
+                LOGGER.info(
+                    'PbftForkResolver::Choose new fork %s: New fork head switches consensus to '
+                    'Pbft',
+                    new_fork_head.identifier[:8])
+                return True
+
+            raise \
+                TypeError(
+                    'Trying to compare a Pbft block {} to a non-Pbft '
+                    'block {} that is not the direct predecessor'.format(
+                        new_fork_head.identifier[:8],
+                        cur_fork_head.identifier[:8]))
+
+        if new_fork_head.block_num == cur_fork_head.block_num:
+            cur_fork_hash =self.hash_signer_public_key(
+                cur_fork_head.header.signer_public_key,
+                cur_fork_head.header.previous_block_id)
+            new_fork_hash = self.hash_signer_public_key(
+                new_fork_head.header.signer_public_key,
+                new_fork_head.header.previous_block_id)
+
+            result = new_fork_hash < cur_fork_hash
+
+        else:
+            result = new_fork_head.block_num > cur_fork_head.block_num
+        LOGGER.debug('BgtForkResolver:: compare_forks result=%s',result)
+        return result
+        """
         chosen_fork_head = None
 
-        state_view = \
-            BlockWrapper.state_view_for_block(
+        state_view = BlockWrapper.state_view_for_block(
                 block_wrapper=cur_fork_head,
                 state_view_factory=self._state_view_factory)
-        bgt_enclave_module = \
-            factory.BgtEnclaveFactory.get_bgt_enclave_module(
+
+        bgt_enclave_module = factory.BgtEnclaveFactory.get_bgt_enclave_module(
                 state_view=state_view,
                 config_dir=self._config_dir,
                 data_dir=self._data_dir)
 
-        current_fork_wait_certificate = \
-            utils.deserialize_wait_certificate(
+        current_fork_wait_certificate = utils.deserialize_wait_certificate(
                 block=cur_fork_head,
                 bgt_enclave_module=bgt_enclave_module)
-        new_fork_wait_certificate = \
-            utils.deserialize_wait_certificate(
+
+        new_fork_wait_certificate = utils.deserialize_wait_certificate(
                 block=new_fork_head,
                 bgt_enclave_module=bgt_enclave_module)
 
@@ -303,3 +346,4 @@ class PbftForkResolver(ForkResolverInterface):
                 chosen_fork_head = cur_fork_head
 
         return chosen_fork_head == new_fork_head
+        """

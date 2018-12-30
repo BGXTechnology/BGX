@@ -36,7 +36,9 @@ RUN apt-get install -y -q \
     python3-grpcio-tools \
     python3-protobuf
 
-RUN apt-get install -y -q \
+RUN apt-get update && apt-get install -y --no-install-recommends apt-utils
+
+RUN apt-get install -y -q --fix-missing\
     libssl-dev \
     openssl \
     pkg-config \

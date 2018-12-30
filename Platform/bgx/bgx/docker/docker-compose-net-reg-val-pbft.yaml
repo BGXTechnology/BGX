@@ -1,0 +1,336 @@
+# Copyright 2018 Cargill Incorporated
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+version: '3.6'
+
+services:
+
+  settings-tp:
+    build:
+      context: ../..
+      dockerfile: bgx/docker/settings/Dockerfile-${DISTR}
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
+        - BGX_TOP=bgx
+    image: sawtooth-settings-tp-bgx:${ISOLATION_ID}
+    networks: 
+    - network1
+    environment:
+    - SAWTOOTH_HOME=/project/${BGX_TOP}/data-bgx
+    volumes:
+      - ../..:/project/${BGX_TOP}
+    container_name: sawtooth-settings-tp-bgx
+    depends_on:
+      - validator-bgx
+    command: |
+      bash -c "
+        bgx/bin/protogen
+        cd families/settings
+        python3 setup.py clean --all
+        python3 setup.py build
+        settings-tp -vv -C tcp://validator-bgx:4004
+      "
+    stop_signal: SIGKILL
+
+  bgt-tp-python:
+    build:
+      context: ../..
+      dockerfile: bgx/families/bgt_python/Dockerfile-${DISTR}
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
+        - BGX_TOP=bgx
+    image: bgt-tp-python-bgx:${ISOLATION_ID}
+    environment:
+    - SAWTOOTH_HOME=/project/${BGX_TOP}/data-bgx
+    networks:
+    - network1
+    volumes:
+      - ../..:/project/${BGX_TOP}
+    container_name: bgt-tp-python-bgx
+    depends_on:
+      - validator-bgx
+    command: |
+      bash -c "
+        bgx/bin/protogen
+        cd bgx/families/bgt_python
+        python3 setup.py clean --all
+        python3 setup.py build
+        bgt-tp-python -vv -C tcp://validator-bgx:4004
+      "
+    stop_signal: SIGKILL
+
+  bgx-registry:
+    build:
+      context: ../..
+      dockerfile: bgx/families/bgx_validator_registry/Dockerfile-${DISTR}
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
+        - BGX_TOP=bgx
+    image: bgx-validator-registry:${ISOLATION_ID}
+    environment:
+    - SAWTOOTH_HOME=/project/${BGX_TOP}/data-bgx
+    networks:
+    - network1
+    volumes:
+      - ../..:/project/${BGX_TOP}
+    container_name: bgx-validator-registry
+    depends_on:
+      - validator-bgx
+    command: |
+      bash -c "
+        bgx/bin/protogen
+        cd bgx/families/bgx_validator_registry
+        python3 setup.py clean --all
+        python3 setup.py build
+        bgx-validator-registry -vv -C tcp://validator-bgx:4004
+      "
+    stop_signal: SIGKILL
+
+
+#  smart-bgt-tp-python:
+#    build:
+#      context: ../..
+#      dockerfile: bgx/families/smart_bgt_python/Dockerfile
+#      args:
+#        - http_proxy
+#        - https_proxy
+#        - no_proxy
+#        - BGX_TOP=bgx
+#    image: smart-bgt-tp-python-bgx:${ISOLATION_ID}
+#    environment:
+#    - SAWTOOTH_HOME=/project/${BGX_TOP}/data-bgx
+#    networks:
+#    - network1
+#    volumes:
+#      - ../..:/project/${BGX_TOP}
+#    container_name: smart-bgt-tp-python-bgx
+#    depends_on:
+#      - validator-bgx
+#    command: |
+#      bash -c "
+#        bgx/bin/protogen
+#        cd bgx/families/smart_bgt_python
+#        python3 setup.py clean --all
+#        python3 setup.py build
+#        ../../bin/smart-bgt-tp-python -vv -C tcp://validator-bgx:4004
+#      "
+#    stop_signal: SIGKILL
+
+
+
+  client:
+    build:
+      context: ../..
+      dockerfile: bgx/docker/sawtooth-shell-${DISTR}
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
+        - BGX_TOP=bgx
+    image: sawtooth-shell-bgx:${ISOLATION_ID}
+    networks:
+    - network1
+    environment:
+    - SAWTOOTH_HOME=/project/${BGX_TOP}/data-bgx
+    volumes:
+      - ../..:/project/${BGX_TOP}
+    container_name: sawtooth-shell-bgx
+    depends_on:
+      - validator-bgx
+    command: |
+      bash -c "
+        ls -l;sawtooth keygen --force &&
+        tail -f /dev/null
+      "
+    stop_signal: SIGKILL
+
+
+  validator-bgx:
+    build:
+      context: ../..
+      dockerfile: bgx/validator/Dockerfile-${DISTR}
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
+        - BGX_TOP=bgx
+    image: validator-bgx:${ISOLATION_ID}
+    networks:
+    - network1
+    environment:
+    - SAWTOOTH_HOME=/project/${BGX_TOP}/data-bgx
+    volumes:
+      - ../..:/project/${BGX_TOP}
+    container_name: validator-bgx
+    expose:
+      - 4004
+      - 8800
+      - 5050
+    ports:
+      - "4004:4004"
+      - "8800:8800"
+    # start the validator with an empty genesis batch
+    command: |
+      bash -c "
+        bgx/bin/protogen
+        rm -f data-bgx/data/* data-bgx/logs/*.log*;
+        ls -l ;cd bgx/validator
+        python3 setup.py clean --all
+        python3 setup.py build
+        sawadm keygen
+        sawtooth keygen my_key
+        sawset proposal create -k /root/.sawtooth/keys/my_key.priv -o sawset.batch sawtooth.consensus.algorithm=Devmode sawtooth.consensus.pbft.node=plink sawtooth.consensus.pbft.max_log_size=20
+        sawset genesis -k /root/.sawtooth/keys/my_key.priv 
+        sawadm genesis config-genesis.batch  sawset.batch
+        validator-bgx -vv  \
+            --endpoint tcp://validator-bgx:8800 \
+            --bind component:tcp://eth0:4004 \
+            --bind network:tcp://eth0:8800 \
+            --bind consensus:tcp://eth0:5050 \
+      "
+    stop_signal: SIGKILL
+
+  bgx-api:
+    build:
+      context: ../..
+      dockerfile: bgx/rest-api/Dockerfile-${DISTR}
+      args:
+        - http_proxy   
+        - https_proxy
+        - no_proxy
+        - BGX_TOP=bgx
+    image: bgx-rest-api
+    environment:
+    - SAWTOOTH_HOME=/project/${BGX_TOP}/data-bgx
+    volumes:
+      - ../..:/project/${BGX_TOP}
+    container_name: bgx-api
+    networks:
+    - network1
+    ports:
+      - "8008:8008" 
+    depends_on:
+       - validator-bgx
+    command: |
+      bash -c "
+        bgx/bin/protogen
+        cd bgx/rest-api
+        python3 setup.py clean --all
+        python3 setup.py build
+        bgx-rest-api -vv --connect tcp://validator-bgx:4004 --bind bgx-api:8008
+      "
+    stop_signal: SIGKILL
+
+#  rest-api:
+#    build:
+#      context: ../..
+#      dockerfile: bgx/docker/rest_api/Dockerfile-${DISTR}
+#      args:
+#        - http_proxy
+#        - https_proxy
+#        - no_proxy
+#        - BGX_TOP=bgx
+#    image: sawtooth-rest-api-bgx:${ISOLATION_ID}
+#    environment:
+#    - SAWTOOTH_HOME=/project/${BGX_TOP}/data-bgx
+#    volumes:
+#      - ../..:/project/${BGX_TOP}
+#    container_name: sawtooth-rest-api-bgx
+#    networks:
+#    - network1
+#    ports:
+#      - "8008:8008"
+#    depends_on:
+#      - validator-bgx
+#    command: |
+#      bash -c "
+#        bgx/bin/protogen
+#        cd rest_api
+#        python3 setup.py clean --all
+#        python3 setup.py build
+#        sawtooth-rest-api -vv --connect tcp://validator-bgx:4004 --bind rest-api:8008
+#      "
+#    stop_signal: SIGKILL
+
+#  pbft-python:
+#    build:
+#      context: ../..
+#      dockerfile: bgx/consensus/pbft_python/Dockerfile-${DISTR}
+#      args:
+#        - http_proxy
+#        - https_proxy
+#        - no_proxy
+#        - BGX_TOP=bgx
+#    image: sawtooth-pbft-python-bgx:${ISOLATION_ID}
+#    networks:
+#    - network1
+#    environment:
+#    - SAWTOOTH_HOME=/project/${BGX_TOP}/data-bgx
+#    volumes:
+#      - ../..:/project/${BGX_TOP}
+#    container_name: sawtooth-pbft-python-bgx
+#    depends_on:
+#      - validator-bgx
+#    #  - bgx-registry
+#    command: |
+#      bash -c "
+#        bgx/bin/protogen
+#        cd bgx/consensus/pbft_python
+#        python3 setup.py clean --all
+#        python3 setup.py build
+#        pbft-python -vv --connect tcp://validator-bgx:5050 --component tcp://validator-bgx:4004
+#      "
+#    stop_signal: SIGKILL
+
+
+  devmode-python:
+   build:
+     context: ../..
+     dockerfile: bgx/consensus/devmode_python/Dockerfile-${DISTR}
+     args:
+       - http_proxy
+       - https_proxy
+       - no_proxy
+       - BGX_TOP=bgx
+   image: devmode-python-bgx:${ISOLATION_ID}
+   networks:
+   - network1
+   environment:
+   - SAWTOOTH_HOME=/project/${BGX_TOP}/data-bgx
+   volumes:
+     - ../..:/project/${BGX_TOP}
+   container_name: devmode-python-bgx
+   depends_on:
+     - validator-bgx
+   command: |
+     bash -c "
+       bgx/bin/protogen
+       cd bgx/consensus/devmode_python
+       python3 setup.py clean --all
+       python3 setup.py build
+       devmode-python -vv --connect tcp://validator-bgx:5050 --component tcp://validator-bgx:4004
+     "
+   stop_signal: SIGKILL
+
+
+networks:
+  network1:
+     name: bgx-network
+  

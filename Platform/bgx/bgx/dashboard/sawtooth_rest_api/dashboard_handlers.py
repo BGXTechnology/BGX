@@ -75,8 +75,8 @@ class DashboardRouteHandler(RouteHandler):
         try:
             with open('./network.json') as file:
                 self._network = json.load(file)
-        except:
-            pass
+        except Exception as err:
+            LOGGER.debug('DashboardRouteHandler: err=%s',err)
 
         
         #LOGGER.debug('DashboardRouteHandler: network=%s',self._network)
@@ -143,8 +143,12 @@ class DashboardRouteHandler(RouteHandler):
             client_state_pb2.ClientStateGetRequest(
                 state_root=root, address=address),
             error_traps)
-
         content = cbor.loads(base64.b64decode(response['value']))
+        if isinstance(content, dict) :
+            for key in content:
+                LOGGER.debug('DashboardRouteHandler:_get_token GROUP (%s)',key)
+                token = json.loads(content[key])
+                content[key] = token
         LOGGER.debug('DashboardRouteHandler: fetch_state=(%s)',content)
         return self._wrap_response(
             request,

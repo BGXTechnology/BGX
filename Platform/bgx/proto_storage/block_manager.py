@@ -13,16 +13,17 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
+from block_wrapper import BlockWrapper
+
 import ctypes
 import logging
 from enum import IntEnum
 
 LOGGER = logging.getLogger(__name__)
 
-#from sawtooth_validator.ffi import OwnedPointer
-from sawtooth_validator.protobuf.block_pb2 import Block, BlockHeader
-from sawtooth_validator.journal.block_wrapper import BlockWrapper
-#from sawtooth_validator import ffi
+# from sawtooth_validator.ffi import OwnedPointer
+from block_pb2 import Block, BlockHeader
+# from sawtooth_validator import ffi
 
 NULL_BLOCK_IDENTIFIER = "0000000000000000"
 
@@ -103,18 +104,14 @@ class RefCount:
 
 
 class BlockManager():
-    # Initializes instance of BlockManager class
+
     def __init__(self):
         LOGGER.debug("BlockManager: __init__")
-        # MainCahce
         self.block_by_block_id = {}
-        # BlockStore instances
         self.blockstore_by_name = {}
-        # Dict with counters of blocks references
         self.references_by_block_id = {}
         self.pointer = 1 # this is fake pointer
 
-    # Adds Block Store and inserts it's blocks in MainCache and creates references for them(blocks)
     def add_store(self, name, block_store):
         LOGGER.debug("BlockManager: add_store name=%s", name)
         for block in block_store.get_block_iter():
@@ -127,11 +124,6 @@ class BlockManager():
 
     @staticmethod
     def check_predecessors(branch):
-        """
-        Checks all blocks in branch on existance of predecessors
-        :param branch: array of blocks
-        :return: ordered array
-        """
         predecessors = []
         heads = []
         tail = ''
@@ -157,12 +149,8 @@ class BlockManager():
                 raise MissingPredecessorInBranch("Missing predecessor")
         return ordered_branch
 
+    # Checks if block with block_id is in any self.blockstore_by_name or self.references_by_block_id
     def contains_block(self, block_id):
-        """
-        Checks if block with block_id is in any self.blockstore_by_name or self.references_by_block_id
-        :param block_id: string
-        :return: boolean
-        """
         if block_id in self.references_by_block_id:
             return True
         for store_name in self.blockstore_by_name:
@@ -173,12 +161,8 @@ class BlockManager():
                     return True
         return False
 
+    # Adds blocks from branch to MainCache and creates references on them
     def put(self, branch):
-        """
-        Adds blocks from branch to MainCache and creates references on them
-        :param branch: array of blocks
-        :return: None
-        """
         LOGGER.debug("BlockManager: put branch=%s", branch)
         ordered_branch = self.check_predecessors(branch)
         head_block_header = BlockHeader().FromString(ordered_branch[0].header)
@@ -220,12 +204,8 @@ class BlockManager():
                 )
 
 
+    # Adds block to referenced dict
     def ref_block(self, block_id):
-        """
-        Adds block to referenced dict
-        :param block_id: string
-        :return: None
-        """
         LOGGER.debug("BlockManager: ref_block block_id=%s", block_id)
         if block_id in self.references_by_block_id:
             self.references_by_block_id[block_id].increase_external_ref_count()
@@ -249,14 +229,9 @@ class BlockManager():
         self.references_by_block_id[block_id] = rc
         LOGGER.debug("BlockManager: ref_block block=(%s)", block_id)
 
-
+    # Removes references of block with block_id
+    # If references if block will be less than 1 it will be removed from MainCache
     def unref_block(self, block_id):
-        """
-        Removes references of block with block_id
-        If references if block will be less than 1 it will be removed from MainCache
-        :param block_id: string
-        :return: None
-        """
         LOGGER.debug("BlockManager: unref_block block_id=%s", block_id)
         if block_id not in self.references_by_block_id:
             raise UnknownBlock()
@@ -300,23 +275,11 @@ class BlockManager():
             LOGGER.debug("BlockManager: unref_block dropped block")
 
     def remove_blocks_from_blockstore(self, to_be_removed, store_name):
-        """
-        Removes blocks of to_be_removed array in BlockSore with name store_name
-        :param to_be_removed: Array of blocks
-        :param store_name: Sore name
-        :return: None
-        """
         blockstore = self.blockstore_by_name[store_name]
         for block in to_be_removed:
             blockstore.__delitem__(block.header_signature)
 
     def insert_blocks_in_blockstore(self, to_be_inserted, store_name):
-        """
-        Inserts blocks of to_be_inserted array in BlockSore with name store_name
-        :param to_be_inserted: Array of blocks
-        :param store_name: Store name
-        :return: None
-        """
         for block in to_be_inserted:
             if block.header_signature in self.block_by_block_id:
                 del self.block_by_block_id[block.header_signature]
@@ -324,13 +287,8 @@ class BlockManager():
         blockstore = self.blockstore_by_name[store_name]
         blockstore.update_chain([BlockWrapper(block) for block in to_be_inserted])
 
+    # Adds block to blockstore with name store_name
     def persist(self, block_id, store_name):
-        """
-        Adds branch of blocks from block_id to blockstore with name store_name
-        :param block_id: head of branch
-        :param store_name: Store name
-        :return:
-        """
         LOGGER.debug("BlockManager: persist block_id=%s  store_name=%s", block_id, store_name)
         if store_name not in self.blockstore_by_name:
             raise UnknownBlockStore()
@@ -354,15 +312,11 @@ class BlockManager():
         contains = ctypes.c_bool(False)
         return contains
 
+    # Returns set of (Location, data)
+    # If found in MainCache -> ('MainCache', block)
+    # If found in BlockStore -> ('BlockStore', store_name)
+    # Else ('BlockNotFound', None)
     def get_block_from_main_cache_or_blockstore_name(self, block_id):
-        """
-        Returns set of (Location, data)
-        If found in MainCache -> ('MainCache', block)
-        If found in BlockStore -> ('BlockStore', store_name)
-        Else ('BlockNotFound', None)
-        :param block_id: string
-        :return: set
-        """
         if block_id in self.block_by_block_id:
             return 'MainCache', self.block_by_block_id[block_id]
         else:
@@ -372,13 +326,8 @@ class BlockManager():
                     return 'BlockStore', store_name
         return 'BlockNotFound', None
 
+    # Returns wrapped block from store with specified store_name or None
     def get_block_from_blockstore(self, block_id, store_name):
-        """
-        Returns wrapped block from store with specified store_name or None
-        :param block_id: string
-        :param store_name: string
-        :return:
-        """
         blockstore = self.blockstore_by_name[store_name]
         for wrapped_block in blockstore.get_block_iter():
             block = wrapped_block.block
@@ -386,31 +335,16 @@ class BlockManager():
                 return wrapped_block
         return None
 
+    # Returns block iterator for list of block ids
     def get(self, block_ids):
-        """
-        Returns block iterator for list of block ids
-        :param block_ids: string
-        :return: iterator
-        """
         LOGGER.debug("BlockManager: get block_ids=%s", block_ids)
         return _GetBlockIterator(self, block_ids)
 
     def branch(self, tip):
-        """
-        Returns branch iterator which starts with tip
-        :param tip: string
-        :return: iterator
-        """
         LOGGER.debug("BlockManager: branch tip=%s", tip)
         return _BranchIterator(self, tip)
 
     def branch_diff(self, tip, exclude):
-        """
-        Returns branch iterator which starts with tip
-        :param tip: string
-        :param exclude: array of blocks to exclude
-        :return: iterator
-        """
         LOGGER.debug("BlockManager: branch_diff tip=%s", tip)
         return _BranchDiffIterator(self, tip, exclude)
 
