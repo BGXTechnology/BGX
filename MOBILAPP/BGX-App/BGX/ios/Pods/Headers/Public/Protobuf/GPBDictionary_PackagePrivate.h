@@ -1,0 +1,1 @@
+link ../../../Protobuf/objectivec/GPBDictionary_PackagePrivate.h
