@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/xml/preferences.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/react-native-0.56.0.aar/b531386ce7f8282e3a242a5eb8095a80/res/xml/preferences.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/xml/filepaths.xml",
+        "source": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/src/main/res/xml/filepaths.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/xml/provider_paths.xml",
+        "source": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/node_modules/react-native-image-picker/android/build/intermediates/bundles/debug/res/xml/provider_paths.xml"
+    }
+]

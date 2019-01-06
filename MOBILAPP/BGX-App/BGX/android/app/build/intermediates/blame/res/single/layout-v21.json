@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout-v21/notification_action_tombstone.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/support-compat-27.1.1.aar/76f550f27e9138f29d821235265bb694/res/layout-v21/notification_action_tombstone.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout-v21/notification_template_icon_group.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/support-compat-27.1.1.aar/76f550f27e9138f29d821235265bb694/res/layout-v21/notification_template_icon_group.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout-v21/notification_action.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/support-compat-27.1.1.aar/76f550f27e9138f29d821235265bb694/res/layout-v21/notification_action.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout-v21/notification_template_custom_big.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/support-compat-27.1.1.aar/76f550f27e9138f29d821235265bb694/res/layout-v21/notification_template_custom_big.xml"
+    }
+]

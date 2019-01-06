@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/mipmap-xxhdpi-v4/ic_launcher_round.png",
+        "source": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/mipmap-xxhdpi-v4/ic_launcher.png",
+        "source": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png"
+    }
+]

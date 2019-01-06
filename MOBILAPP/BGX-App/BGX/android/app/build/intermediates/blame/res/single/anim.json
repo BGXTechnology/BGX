@@ -1,0 +1,98 @@
+[
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/anim/abc_slide_in_bottom.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/anim/abc_slide_in_bottom.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/anim/catalyst_push_up_out.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/react-native-0.56.0.aar/b531386ce7f8282e3a242a5eb8095a80/res/anim/catalyst_push_up_out.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/anim/abc_fade_out.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/anim/abc_fade_out.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/anim/catalyst_fade_out.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/react-native-0.56.0.aar/b531386ce7f8282e3a242a5eb8095a80/res/anim/catalyst_fade_out.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/anim/design_fab_out.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/design-25.3.1.aar/371b203856fd5e9fd6ffef498b3312fd/res/anim/design_fab_out.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/anim/catalyst_fade_in.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/react-native-0.56.0.aar/b531386ce7f8282e3a242a5eb8095a80/res/anim/catalyst_fade_in.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/anim/tooltip_enter.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/anim/tooltip_enter.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/anim/abc_slide_in_top.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/anim/abc_slide_in_top.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/anim/tooltip_exit.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/anim/tooltip_exit.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/anim/design_fab_in.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/design-25.3.1.aar/371b203856fd5e9fd6ffef498b3312fd/res/anim/design_fab_in.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/anim/catalyst_slide_up.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/react-native-0.56.0.aar/b531386ce7f8282e3a242a5eb8095a80/res/anim/catalyst_slide_up.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/anim/design_bottom_sheet_slide_in.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/design-25.3.1.aar/371b203856fd5e9fd6ffef498b3312fd/res/anim/design_bottom_sheet_slide_in.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/anim/design_snackbar_out.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/design-25.3.1.aar/371b203856fd5e9fd6ffef498b3312fd/res/anim/design_snackbar_out.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/anim/abc_slide_out_top.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/anim/abc_slide_out_top.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/anim/catalyst_push_up_in.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/react-native-0.56.0.aar/b531386ce7f8282e3a242a5eb8095a80/res/anim/catalyst_push_up_in.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/anim/abc_popup_exit.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/anim/abc_popup_exit.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/anim/abc_fade_in.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/anim/abc_fade_in.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/anim/abc_popup_enter.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/anim/abc_popup_enter.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/anim/design_bottom_sheet_slide_out.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/design-25.3.1.aar/371b203856fd5e9fd6ffef498b3312fd/res/anim/design_bottom_sheet_slide_out.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/anim/design_snackbar_in.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/design-25.3.1.aar/371b203856fd5e9fd6ffef498b3312fd/res/anim/design_snackbar_in.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/anim/catalyst_slide_down.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/react-native-0.56.0.aar/b531386ce7f8282e3a242a5eb8095a80/res/anim/catalyst_slide_down.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/anim/abc_shrink_fade_out_from_bottom.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/anim/abc_shrink_fade_out_from_bottom.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/anim/abc_grow_fade_in_from_bottom.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/anim/abc_grow_fade_in_from_bottom.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/anim/abc_slide_out_bottom.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/anim/abc_slide_out_bottom.xml"
+    }
+]

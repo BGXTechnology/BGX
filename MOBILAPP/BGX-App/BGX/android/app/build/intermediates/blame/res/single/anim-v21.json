@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/anim-v21/design_bottom_sheet_slide_in.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/design-25.3.1.aar/371b203856fd5e9fd6ffef498b3312fd/res/anim-v21/design_bottom_sheet_slide_in.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/anim-v21/design_bottom_sheet_slide_out.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/design-25.3.1.aar/371b203856fd5e9fd6ffef498b3312fd/res/anim-v21/design_bottom_sheet_slide_out.xml"
+    }
+]

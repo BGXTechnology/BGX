@@ -1,0 +1,38 @@
+[
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/drawable-v21/avd_hide_password.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/design-25.3.1.aar/371b203856fd5e9fd6ffef498b3312fd/res/drawable-v21/avd_hide_password.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/drawable-v21/bg_clickable.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/library-1.8.aar/a69e780977e2492063c965814b72774f/res/drawable-v21/bg_clickable.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/drawable-v21/abc_action_bar_item_background_material.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/drawable-v21/abc_action_bar_item_background_material.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/drawable-v21/design_bottom_navigation_item_background.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/design-25.3.1.aar/371b203856fd5e9fd6ffef498b3312fd/res/drawable-v21/design_bottom_navigation_item_background.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/drawable-v21/abc_btn_colored_material.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/drawable-v21/abc_btn_colored_material.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/drawable-v21/avd_show_password.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/design-25.3.1.aar/371b203856fd5e9fd6ffef498b3312fd/res/drawable-v21/avd_show_password.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/drawable-v21/abc_edit_text_material.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/drawable-v21/abc_edit_text_material.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/drawable-v21/design_password_eye.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/design-25.3.1.aar/371b203856fd5e9fd6ffef498b3312fd/res/drawable-v21/design_password_eye.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/drawable-v21/notification_action_background.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/support-compat-27.1.1.aar/76f550f27e9138f29d821235265bb694/res/drawable-v21/notification_action_background.xml"
+    }
+]

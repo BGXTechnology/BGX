@@ -1,0 +1,282 @@
+[
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/notification_template_big_media_narrow.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/support-media-compat-27.0.2.aar/35b14ec3b41d111b9c277e4f954cd998/res/layout/notification_template_big_media_narrow.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/notification_template_icon_group.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/support-compat-27.1.1.aar/76f550f27e9138f29d821235265bb694/res/layout/notification_template_icon_group.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/notification_media_action.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/support-media-compat-27.0.2.aar/35b14ec3b41d111b9c277e4f954cd998/res/layout/notification_media_action.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/abc_list_menu_item_icon.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/layout/abc_list_menu_item_icon.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/notification_template_part_chronometer.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/support-compat-27.1.1.aar/76f550f27e9138f29d821235265bb694/res/layout/notification_template_part_chronometer.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/design_navigation_item.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/design-25.3.1.aar/371b203856fd5e9fd6ffef498b3312fd/res/layout/design_navigation_item.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/activity_file_picker.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/library-1.8.aar/a69e780977e2492063c965814b72774f/res/layout/activity_file_picker.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/design_navigation_item_header.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/design-25.3.1.aar/371b203856fd5e9fd6ffef498b3312fd/res/layout/design_navigation_item_header.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/abc_alert_dialog_material.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/layout/abc_alert_dialog_material.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/design_navigation_item_separator.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/design-25.3.1.aar/371b203856fd5e9fd6ffef498b3312fd/res/layout/design_navigation_item_separator.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/abc_dialog_title_material.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/layout/abc_dialog_title_material.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/abc_action_bar_up_container.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/layout/abc_action_bar_up_container.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/notification_template_media_custom.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/support-media-compat-27.0.2.aar/35b14ec3b41d111b9c277e4f954cd998/res/layout/notification_template_media_custom.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/fragment_directory.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/library-1.8.aar/a69e780977e2492063c965814b72774f/res/layout/fragment_directory.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/list_item.xml",
+        "source": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/node_modules/react-native-image-picker/android/build/intermediates/bundles/debug/res/layout/list_item.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/notification_action_tombstone.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/support-compat-27.1.1.aar/76f550f27e9138f29d821235265bb694/res/layout/notification_action_tombstone.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/abc_action_bar_title_item.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/layout/abc_action_bar_title_item.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/notification_template_big_media_narrow_custom.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/support-media-compat-27.0.2.aar/35b14ec3b41d111b9c277e4f954cd998/res/layout/notification_template_big_media_narrow_custom.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/notification_template_part_time.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/support-compat-27.1.1.aar/76f550f27e9138f29d821235265bb694/res/layout/notification_template_part_time.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/dev_loading_view.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/react-native-0.56.0.aar/b531386ce7f8282e3a242a5eb8095a80/res/layout/dev_loading_view.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/abc_screen_toolbar.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/layout/abc_screen_toolbar.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/support_simple_spinner_dropdown_item.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/layout/support_simple_spinner_dropdown_item.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/activity_test.xml",
+        "source": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/src/main/res/layout/activity_test.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/abc_action_menu_item_layout.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/layout/abc_action_menu_item_layout.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/select_dialog_singlechoice_material.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/layout/select_dialog_singlechoice_material.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/notification_template_big_media.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/support-media-compat-27.0.2.aar/35b14ec3b41d111b9c277e4f954cd998/res/layout/notification_template_big_media.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/abc_list_menu_item_layout.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/layout/abc_list_menu_item_layout.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/design_bottom_sheet_dialog.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/design-25.3.1.aar/371b203856fd5e9fd6ffef498b3312fd/res/layout/design_bottom_sheet_dialog.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/abc_search_dropdown_item_icons_2line.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/layout/abc_search_dropdown_item_icons_2line.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/design_navigation_menu.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/design-25.3.1.aar/371b203856fd5e9fd6ffef498b3312fd/res/layout/design_navigation_menu.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/fps_view.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/react-native-0.56.0.aar/b531386ce7f8282e3a242a5eb8095a80/res/layout/fps_view.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/select_dialog_item_material.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/layout/select_dialog_item_material.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/select_dialog_multichoice_material.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/layout/select_dialog_multichoice_material.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/notification_template_media.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/support-media-compat-27.0.2.aar/35b14ec3b41d111b9c277e4f954cd998/res/layout/notification_template_media.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/design_bottom_navigation_item.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/design-25.3.1.aar/371b203856fd5e9fd6ffef498b3312fd/res/layout/design_bottom_navigation_item.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/notification_template_big_media_custom.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/support-media-compat-27.0.2.aar/35b14ec3b41d111b9c277e4f954cd998/res/layout/notification_template_big_media_custom.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/abc_screen_content_include.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/layout/abc_screen_content_include.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/abc_select_dialog_material.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/layout/abc_select_dialog_material.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/design_navigation_menu_item.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/design-25.3.1.aar/371b203856fd5e9fd6ffef498b3312fd/res/layout/design_navigation_menu_item.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/redbox_item_frame.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/react-native-0.56.0.aar/b531386ce7f8282e3a242a5eb8095a80/res/layout/redbox_item_frame.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/abc_action_menu_layout.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/layout/abc_action_menu_layout.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/surface_view.xml",
+        "source": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/node_modules/react-native-camera/android/build/intermediates/bundles/debug/res/layout/surface_view.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/abc_popup_menu_item_layout.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/layout/abc_popup_menu_item_layout.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/abc_alert_dialog_title_material.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/layout/abc_alert_dialog_title_material.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/design_layout_snackbar.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/design-25.3.1.aar/371b203856fd5e9fd6ffef498b3312fd/res/layout/design_layout_snackbar.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/abc_screen_simple.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/layout/abc_screen_simple.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/abc_expanded_menu_layout.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/layout/abc_expanded_menu_layout.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/design_navigation_item_subheader.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/design-25.3.1.aar/371b203856fd5e9fd6ffef498b3312fd/res/layout/design_navigation_item_subheader.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/abc_action_mode_bar.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/layout/abc_action_mode_bar.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/design_layout_tab_icon.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/design-25.3.1.aar/371b203856fd5e9fd6ffef498b3312fd/res/layout/design_layout_tab_icon.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/abc_popup_menu_header_item_layout.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/layout/abc_popup_menu_header_item_layout.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/abc_list_menu_item_radio.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/layout/abc_list_menu_item_radio.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/design_layout_tab_text.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/design-25.3.1.aar/371b203856fd5e9fd6ffef498b3312fd/res/layout/design_layout_tab_text.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/abc_action_mode_close_item_material.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/layout/abc_action_mode_close_item_material.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/abc_search_view.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/layout/abc_search_view.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/design_text_input_password_icon.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/design-25.3.1.aar/371b203856fd5e9fd6ffef498b3312fd/res/layout/design_text_input_password_icon.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/abc_screen_simple_overlay_action_mode.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/layout/abc_screen_simple_overlay_action_mode.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/notification_template_lines_media.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/support-media-compat-27.0.2.aar/35b14ec3b41d111b9c277e4f954cd998/res/layout/notification_template_lines_media.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/design_layout_snackbar_include.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/design-25.3.1.aar/371b203856fd5e9fd6ffef498b3312fd/res/layout/design_layout_snackbar_include.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/item_file.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/library-1.8.aar/a69e780977e2492063c965814b72774f/res/layout/item_file.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/tooltip.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/layout/tooltip.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/notification_media_cancel_action.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/support-media-compat-27.0.2.aar/35b14ec3b41d111b9c277e4f954cd998/res/layout/notification_media_cancel_action.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/redbox_view.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/react-native-0.56.0.aar/b531386ce7f8282e3a242a5eb8095a80/res/layout/redbox_view.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/design_menu_item_action_area.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/design-25.3.1.aar/371b203856fd5e9fd6ffef498b3312fd/res/layout/design_menu_item_action_area.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/abc_activity_chooser_view_list_item.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/layout/abc_activity_chooser_view_list_item.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/abc_list_menu_item_checkbox.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/layout/abc_list_menu_item_checkbox.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/notification_action.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/support-compat-27.1.1.aar/76f550f27e9138f29d821235265bb694/res/layout/notification_action.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/redbox_item_title.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/react-native-0.56.0.aar/b531386ce7f8282e3a242a5eb8095a80/res/layout/redbox_item_title.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/abc_alert_dialog_button_bar_material.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/layout/abc_alert_dialog_button_bar_material.xml"
+    },
+    {
+        "merged": "/Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/res/merged/debug/layout/abc_activity_chooser_view.xml",
+        "source": "/Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/res/layout/abc_activity_chooser_view.xml"
+    }
+]
