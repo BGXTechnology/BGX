@@ -1,0 +1,73 @@
+{
+  "project_info": {
+    "project_number": "344334663612",
+    "firebase_url": "https://bgxnxx-4def7.firebaseio.com",
+    "project_id": "bgxnxx-4def7",
+    "storage_bucket": "bgxnxx-4def7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:344334663612:android:1de9ae2f32777c08",
+        "android_client_info": {
+          "package_name": "com.bgx"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "344334663612-kvrjs2decmbufnfuh8rr77mm0ok1pv4j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2Hq9wUjSHGmwqsm16f5VOjTEfOo5A7OQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:344334663612:android:8833d9680be89cda",
+        "android_client_info": {
+          "package_name": "com.bgx.test"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "344334663612-kvrjs2decmbufnfuh8rr77mm0ok1pv4j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2Hq9wUjSHGmwqsm16f5VOjTEfOo5A7OQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
