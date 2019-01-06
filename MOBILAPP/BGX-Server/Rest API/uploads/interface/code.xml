@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data>
+  <item>
+    <code>0000000</code>
+    <value>
+      <color>#000000</color>
+      <language>en</language>
+      <logo>uploads/interface/BGX_Logo_Black.png</logo>
+      <text>The place where peoplecan come to find and discover anything the might want to buy online</text>
+    </value>
+  </item>
+  <item>
+    <code>1000100</code>
+    <value>
+      <color>#ffffff</color>
+      <language>en</language>
+      <logo>uploads/interface/logo_white.png</logo>
+      <text>The place where peoplecan come to find and discover anything the might want to buy online</text>
+    </value>
+  </item>
+</data> 
