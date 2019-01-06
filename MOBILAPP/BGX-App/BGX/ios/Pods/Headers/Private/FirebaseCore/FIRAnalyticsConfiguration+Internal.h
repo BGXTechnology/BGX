@@ -1,0 +1,1 @@
+link ../../../FirebaseCore/Firebase/Core/Private/FIRAnalyticsConfiguration+Internal.h
