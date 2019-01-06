@@ -1,0 +1,116 @@
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/constraint-layout-1.1.2.aar/d87d9d04b408d7df5adf4ead5879d97b/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/react-native-0.56.0.aar/b531386ce7f8282e3a242a5eb8095a80/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/react-native-0.56.0.aar/b531386ce7f8282e3a242a5eb8095a80/jars/libs/infer-annotations-4.0.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/library-1.8.aar/a69e780977e2492063c965814b72774f/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/design-25.3.1.aar/371b203856fd5e9fd6ffef498b3312fd/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/d3e7581851e6519b53606dc8cb2874b4/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/multidex-1.0.3.aar/4c12f94253f312e590b0f2cdfbc9b75f/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/firebase-core-16.0.5.aar/2a14a85c91358cfdbf992378f2c7470f/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/modules-2/files-2.1/com.anjlab.android.iab.v3/library/1.0.44/add169444f38ac23ffae27326c75e33fedef73ba/library-1.0.44.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.8.5/f645ed69d595b24d4cf8b3fbb64cc505bede8829/gson-2.8.5.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/firebase-messaging-17.3.4.aar/73246e9b369c0a989c0e1340038bf7bc/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/ShortcutBadger-1.1.17.aar/a64e362687b08be576e5b5b42a6f6b00/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/transition-25.3.1.aar/3bc9e529d17d1fe5b7b4d1bc4c2ea53d/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/play-services-vision-12.0.1.aar/1ad91a12e532c7e97e8f49bbd4b53ff8/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/firebase-measurement-connector-impl-17.0.3.aar/e5ed40f0b86f55b59785d2f15baa5153/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/firebase-analytics-16.0.5.aar/aa753e9f4c978006738747dc22b2ce41/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/play-services-measurement-api-16.0.3.aar/2e0b6f7d3592daf1a8eacdfbf9f890d5/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/firebase-analytics-impl-16.2.3.aar/4aca80944cd1206ce0eb806765e07386/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/firebase-iid-17.0.4.aar/0ae2062a1eaf2f6c21df01cb7b809350/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/firebase-common-16.0.3.aar/87629d15e56b52a107556cbea1cbc5ec/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/firebase-measurement-connector-17.0.1.aar/c5503ac4c3df379815db7bbf10cdceac/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/play-services-vision-common-12.0.1.aar/82d97d342d7b854754137b3fb0d4ce27/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/play-services-stats-16.0.1.aar/24c680ba5122c6b609253d493ed10b06/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/play-services-measurement-base-16.0.4.aar/bd2374b34adab7d9e6bd1b037ae80809/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/play-services-ads-identifier-16.0.0.aar/c6d17d6fe3d3f047c8fbf80693460e6f/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/firebase-iid-interop-16.0.1.aar/253c0c8468d3135097397c3db6535ffe/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/play-services-base-16.0.1.aar/ac1a9baf8b3b002a1ef47c0a8b5a75d7/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/play-services-tasks-16.0.1.aar/b9540d3cefbad095bb9d55ada01cb477/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/play-services-basement-16.0.1.aar/c02f2ec6b466247d9f13f2bb0a37baa3/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/support-v4-27.0.2.aar/0d21bd9cc296a24ebf069357cde1e25b/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/support-fragment-27.0.2.aar/7d5ec68730138017fae848751f2139a2/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/support-core-utils-27.1.1.aar/e1c3e7e569a17573a5081fef150331fa/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/modules-2/files-2.1/com.google.zxing/core/3.3.0/73c49077166faa4c3c0059c5f583d1d7bd1475fe/core-3.3.0.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/modules-2/files-2.1/com.drewnoakes/metadata-extractor/2.9.1/53fdf22be10c9d426ec63431c7342895bc642261/metadata-extractor-2.9.1.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/exifinterface-26.1.0.aar/a9c44b13ee730dfa483c16065d0e7259/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/recyclerview-v7-25.3.1.aar/7b05d7007b6f0be4bb2c48b178f40168/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/animated-vector-drawable-27.0.2.aar/d31fef0609a46a1209622395b5ebe679/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/support-vector-drawable-27.0.2.aar/d42e299e0ab24118252d56ad283ba739/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/support-media-compat-27.0.2.aar/35b14ec3b41d111b9c277e4f954cd998/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/support-core-ui-27.0.2.aar/b5a394f8c413f0513ceb57fa0e6ae33f/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/support-compat-27.1.1.aar/76f550f27e9138f29d821235265bb694/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/modules-2/files-2.1/com.android.support/support-annotations/27.1.1/39ded76b5e1ce1c5b2688e1d25cdc20ecee32007/support-annotations-27.1.1.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/modules-2/files-2.1/com.android.support.constraint/constraint-layout-solver/1.1.2/bfc967828daffc35ba01c9ee204d98b664930a0f/constraint-layout-solver-1.1.2.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/modules-2/files-2.1/javax.inject/javax.inject/1/6975da39a7040257bd51d21a231b76c915872d38/javax.inject-1.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/textlayoutbuilder-1.0.0.aar/e91a2a6c2ba537bf4eae294beb5cd80b/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/fresco-1.9.0.aar/087ed7b2d8852546d0ecdc104cc6dca0/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/imagepipeline-okhttp3-1.9.0.aar/2a9b60aaa9dde961345c23391fadce77/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/drawee-1.9.0.aar/986a72c7651bfd91f7876921e743a6a7/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/imagepipeline-1.9.0.aar/e1ddaa71e7c208df50d9aae3c49c1922/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/imagepipeline-base-1.9.0.aar/31f8e464dae126409deb6652948457c9/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/soloader-0.3.0.aar/abc16fe755164ec36bf32230748b6230/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/modules-2/files-2.1/com.google.code.findbugs/jsr305/3.0.0/5871fb60dc68d67da54a663c3fd636a10a532948/jsr305-3.0.0.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/modules-2/files-2.1/com.squareup.okhttp3/okhttp-urlconnection/3.10.0/ec614c05825ddd2267677a99f585d3913474b125/okhttp-urlconnection-3.10.0.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/modules-2/files-2.1/com.squareup.okhttp3/okhttp/3.10.0/7ef0f1d95bf4c0b3ba30bbae25e0e562b05cf75e/okhttp-3.10.0.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/modules-2/files-2.1/com.squareup.okio/okio/1.14.0/102d7be47241d781ef95f1581d414b0943053130/okio-1.14.0.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/android-jsc-r174650.aar/1c748816380fc7c54fa49a9dfdf0448d/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/modules-2/files-2.1/com.adobe.xmp/xmpcore/5.1.2/55615fa2582424e38705487d1d3969af8554f637/xmpcore-5.1.2.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/play-services-vision-license-12.0.1.aar/2743b2a2229554cac168dc0587b9bd7f/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/modules-2/files-2.1/com.facebook.fbui.textlayoutbuilder/staticlayout-proxy/1.0/f162442a19fff13995fbd51ba414d9ee05579080/staticlayout-proxy-1.0.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/fbcore-1.9.0.aar/a5f977d6ceccebf69407e63fb5bb45c5/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/runtime-1.1.0.aar/93add9ab2a43721a48dd677c59d2a030/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/transforms-1/files-1.1/play-services-vision-common-license-12.0.1.aar/d0256b22e7c296a959843c58314beaa8/jars/classes.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/modules-2/files-2.1/com.parse.bolts/bolts-tasks/1.4.0/d85884acf6810a3bbbecb587f239005cbc846dc4/bolts-tasks-1.4.0.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/modules-2/files-2.1/android.arch.lifecycle/common/1.1.0/edf3f7bfb84a7521d0599efa3b0113a0ee90f85/common-1.1.0.jar(**.class)
+-injars /Users/thailequang/.gradle/caches/modules-2/files-2.1/android.arch.core/common/1.1.0/8007981f7d7540d89cd18471b8e5dcd2b4f99167/common-1.1.0.jar(**.class)
+-injars /Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/node_modules/react-native-languages/android/build/intermediates/intermediate-jars/debug/classes.jar(**.class)
+-injars /Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/node_modules/react-native-share/android/build/intermediates/intermediate-jars/debug/classes.jar(**.class)
+-injars /Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/node_modules/react-native-fcm/android/build/intermediates/intermediate-jars/debug/classes.jar(**.class)
+-injars /Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/node_modules/react-native-mail/android/build/intermediates/intermediate-jars/debug/classes.jar(**.class)
+-injars /Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/node_modules/react-native-file-selector/android/build/intermediates/intermediate-jars/debug/classes.jar(**.class)
+-injars /Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/node_modules/react-native-camera/android/build/intermediates/intermediate-jars/debug/classes.jar(**.class)
+-injars /Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/node_modules/react-native-image-picker/android/build/intermediates/intermediate-jars/debug/classes.jar(**.class)
+-injars /Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/node_modules/react-native-fetch-blob/android/build/intermediates/intermediate-jars/debug/classes.jar(**.class)
+-injars /Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/node_modules/react-native-vector-icons/android/build/intermediates/intermediate-jars/debug/classes.jar(**.class)
+-injars /Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/classes/debug(**.class)
+-outjars /Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/multi-dex/debug/componentClasses.jar
+
+-libraryjars /Users/thailequang/Library/Android/sdk/build-tools/26.0.3/lib/shrinkedAndroid.jar
+
+-forceprocessing
+-dontoptimize
+-dontobfuscate
+-dontusemixedcaseclassnames
+-dontpreverify
+-dontnote **
+-dontwarn **
+-printconfiguration /Users/thailequang/Documents/Work/Titan/BGX/Sources/BGX-ver2/BGX/android/app/build/intermediates/multi-dex/debug/components.flags
+
+
+# view AndroidManifest.xml #generated:59
+-keep class com.bgx.MainApplication {
+    <init>(...);
+}
+
+-keep public class * extends android.app.Instrumentation {
+    <init>();
+}
+
+-keep public class * extends android.app.Application {
+    <init>();
+    void attachBaseContext(android.content.Context);
+}
+
+-keep public class * extends android.app.backup.BackupAgent {
+    <init>();
+}
+
+-keep public class * extends java.lang.annotation.Annotation {
+    <fields>;
+    <methods>;
+}
+
+-keep class com.android.tools.ir.** {
+    <fields>;
+    <methods>;
+}
