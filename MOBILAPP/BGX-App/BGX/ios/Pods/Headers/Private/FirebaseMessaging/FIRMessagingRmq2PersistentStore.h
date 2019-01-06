@@ -1,0 +1,1 @@
+link ../../../FirebaseMessaging/Firebase/Messaging/FIRMessagingRmq2PersistentStore.h

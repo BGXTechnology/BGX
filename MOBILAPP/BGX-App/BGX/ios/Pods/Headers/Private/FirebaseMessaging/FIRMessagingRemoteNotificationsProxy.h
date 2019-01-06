@@ -1,0 +1,1 @@
+link ../../../FirebaseMessaging/Firebase/Messaging/FIRMessagingRemoteNotificationsProxy.h

@@ -1,0 +1,1 @@
+link ../../../Protobuf/objectivec/google/protobuf/Duration.pbobjc.h

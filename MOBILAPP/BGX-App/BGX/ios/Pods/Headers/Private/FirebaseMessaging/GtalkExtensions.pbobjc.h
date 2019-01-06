@@ -1,0 +1,1 @@
+link ../../../FirebaseMessaging/Firebase/Messaging/Protos/GtalkExtensions.pbobjc.h
