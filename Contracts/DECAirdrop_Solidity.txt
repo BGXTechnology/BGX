@@ -1,0 +1,561 @@
+pragma solidity 0.4.25;
+
+library SafeMath {
+
+  /**
+  * @dev Multiplies two numbers, throws on overflow.
+  */
+  function mul(uint256 a, uint256 b) internal pure returns (uint256) {
+    if (a == 0) {
+      return 0;
+    }
+    uint256 c = a * b;
+    assert(c / a == b);
+    return c;
+  }
+
+  /**
+  * @dev Integer division of two numbers, truncating the quotient.
+  */
+  function div(uint256 a, uint256 b) internal pure returns (uint256) {
+    // assert(b > 0); // Solidity automatically throws when dividing by 0
+    uint256 c = a / b;
+    // assert(a == b * c + a % b); // There is no case in which this doesn't hold
+    return c;
+  }
+
+  /**
+  * @dev Substracts two numbers, throws on overflow (i.e. if subtrahend is greater than minuend).
+  */
+  function sub(uint256 a, uint256 b) internal pure returns (uint256) {
+    assert(b <= a);
+    return a - b;
+  }
+
+  /**
+  * @dev Adds two numbers, throws on overflow.
+  */
+  function add(uint256 a, uint256 b) internal pure returns (uint256) {
+    uint256 c = a + b;
+    assert(c >= a);
+    return c;
+  }
+}
+
+contract Multiownable {
+
+    uint256 public ownersGeneration;
+    uint256 public howManyOwnersDecide;
+    address[] public owners;
+    bytes32[] public allOperations;
+    address internal insideCallSender;
+    uint256 internal insideCallCount;
+
+    // Reverse lookup tables for owners and allOperations
+    mapping(address => uint) public ownersIndices; // Starts from 1
+    mapping(bytes32 => uint) public allOperationsIndicies;
+
+    // Owners voting mask per operations
+    mapping(bytes32 => uint256) public votesMaskByOperation;
+    mapping(bytes32 => uint256) public votesCountByOperation;
+
+    event OwnershipTransferred(address[] previousOwners, uint howManyOwnersDecide, address[] newOwners, uint newHowManyOwnersDecide);
+    event OperationCreated(bytes32 operation, uint howMany, uint ownersCount, address proposer);
+    event OperationUpvoted(bytes32 operation, uint votes, uint howMany, uint ownersCount, address upvoter);
+    event OperationPerformed(bytes32 operation, uint howMany, uint ownersCount, address performer);
+    event OperationDownvoted(bytes32 operation, uint votes, uint ownersCount,  address downvoter);
+    event OperationCancelled(bytes32 operation, address lastCanceller);
+
+    function isOwner(address wallet) public constant returns(bool) {
+        return ownersIndices[wallet] > 0;
+    }
+
+    function ownersCount() public constant returns(uint) {
+        return owners.length;
+    }
+
+    function allOperationsCount() public constant returns(uint) {
+        return allOperations.length;
+    }
+
+
+    /**
+    * @dev Allows to perform method by any of the owners
+    */
+    modifier onlyAnyOwner {
+        if (checkHowManyOwners(1)) {
+            bool update = (insideCallSender == address(0));
+            if (update) {
+                insideCallSender = msg.sender;
+                insideCallCount = 1;
+            }
+            _;
+            if (update) {
+                insideCallSender = address(0);
+                insideCallCount = 0;
+            }
+        }
+    }
+
+    /**
+    * @dev Allows to perform method only after many owners call it with the same arguments
+    */
+    modifier onlyManyOwners {
+        if (checkHowManyOwners(howManyOwnersDecide)) {
+            bool update = (insideCallSender == address(0));
+            if (update) {
+                insideCallSender = msg.sender;
+                insideCallCount = howManyOwnersDecide;
+            }
+            _;
+            if (update) {
+                insideCallSender = address(0);
+                insideCallCount = 0;
+            }
+        }
+    }
+
+    /**
+    * @dev Allows to perform method only after all owners call it with the same arguments
+    */
+    modifier onlyAllOwners {
+        if (checkHowManyOwners(owners.length)) {
+            bool update = (insideCallSender == address(0));
+            if (update) {
+                insideCallSender = msg.sender;
+                insideCallCount = owners.length;
+            }
+            _;
+            if (update) {
+                insideCallSender = address(0);
+                insideCallCount = 0;
+            }
+        }
+    }
+
+    /**
+    * @dev Allows to perform method only after some owners call it with the same arguments
+    */
+    modifier onlySomeOwners(uint howMany) {
+        require(howMany > 0, "onlySomeOwners: howMany argument is zero");
+        require(howMany <= owners.length, "onlySomeOwners: howMany argument exceeds the number of owners");
+        
+        if (checkHowManyOwners(howMany)) {
+            bool update = (insideCallSender == address(0));
+            if (update) {
+                insideCallSender = msg.sender;
+                insideCallCount = howMany;
+            }
+            _;
+            if (update) {
+                insideCallSender = address(0);
+                insideCallCount = 0;
+            }
+        }
+    }
+
+
+    constructor() public {
+        owners.push(msg.sender);
+        ownersIndices[msg.sender] = 1;
+        howManyOwnersDecide = 1;
+    }
+
+
+    /**
+     * @dev onlyManyOwners modifier helper
+     */
+    function checkHowManyOwners(uint howMany) internal returns(bool) {
+        if (insideCallSender == msg.sender) {
+            require(howMany <= insideCallCount, "checkHowManyOwners: nested owners modifier check require more owners");
+            return true;
+        }
+
+        uint ownerIndex = ownersIndices[msg.sender] - 1;
+        require(ownerIndex < owners.length, "checkHowManyOwners: msg.sender is not an owner");
+        bytes32 operation = keccak256(abi.encodePacked(msg.data, ownersGeneration));
+
+        require((votesMaskByOperation[operation] & (2 ** ownerIndex)) == 0, "checkHowManyOwners: owner already voted for the operation");
+        votesMaskByOperation[operation] |= (2 ** ownerIndex);
+        uint operationVotesCount = votesCountByOperation[operation] + 1;
+        votesCountByOperation[operation] = operationVotesCount;
+        if (operationVotesCount == 1) {
+            allOperationsIndicies[operation] = allOperations.length;
+            allOperations.push(operation);
+            emit OperationCreated(operation, howMany, owners.length, msg.sender);
+        }
+        emit OperationUpvoted(operation, operationVotesCount, howMany, owners.length, msg.sender);
+
+        // If enough owners confirmed the same operation
+        if (votesCountByOperation[operation] == howMany) {
+            deleteOperation(operation);
+            emit OperationPerformed(operation, howMany, owners.length, msg.sender);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+    * @dev Used to delete cancelled or performed operation
+    * @param operation defines which operation to delete
+    */
+    function deleteOperation(bytes32 operation) internal {
+        uint index = allOperationsIndicies[operation];
+        if (index < allOperations.length - 1) { // Not last
+            allOperations[index] = allOperations[allOperations.length - 1];
+            allOperationsIndicies[allOperations[index]] = index;
+        }
+        allOperations.length--;
+
+        delete votesMaskByOperation[operation];
+        delete votesCountByOperation[operation];
+        delete allOperationsIndicies[operation];
+    }
+
+    
+
+    /**
+    * @dev Allows owners to change their mind by cacnelling votesMaskByOperation operations
+    * @param operation defines which operation to delete
+    */
+    function cancelPending(bytes32 operation) public onlyAnyOwner {
+        uint ownerIndex = ownersIndices[msg.sender] - 1;
+        require((votesMaskByOperation[operation] & (2 ** ownerIndex)) != 0, "cancelPending: operation not found for this user");
+        votesMaskByOperation[operation] &= ~(2 ** ownerIndex);
+        uint operationVotesCount = votesCountByOperation[operation] - 1;
+        votesCountByOperation[operation] = operationVotesCount;
+        emit OperationDownvoted(operation, operationVotesCount, owners.length, msg.sender);
+        if (operationVotesCount == 0) {
+            deleteOperation(operation);
+            emit OperationCancelled(operation, msg.sender);
+        }
+    }
+
+    /**
+    * @dev Allows owners to change ownership
+    * @param newOwners defines array of addresses of new owners
+    */
+    function transferOwnership(address[] newOwners) public {
+        transferOwnershipWithHowMany(newOwners, newOwners.length);
+    }
+
+    /**
+    * @dev Allows owners to change ownership
+    * @param newOwners defines array of addresses of new owners
+    * @param newHowManyOwnersDecide defines how many owners can decide
+    */
+    function transferOwnershipWithHowMany(address[] newOwners, uint256 newHowManyOwnersDecide) public onlyManyOwners {
+        require(newOwners.length > 0, "transferOwnershipWithHowMany: owners array is empty");
+        require(newOwners.length <= 256, "transferOwnershipWithHowMany: owners count is greater then 256");
+        require(newHowManyOwnersDecide > 0, "transferOwnershipWithHowMany: newHowManyOwnersDecide equal to 0");
+        require(newHowManyOwnersDecide <= newOwners.length, "transferOwnershipWithHowMany: newHowManyOwnersDecide exceeds the number of owners");
+
+        // Reset owners reverse lookup table
+        for (uint j = 0; j < owners.length; j++) {
+            delete ownersIndices[owners[j]];
+        }
+        for (uint i = 0; i < newOwners.length; i++) {
+            require(newOwners[i] != address(0), "transferOwnershipWithHowMany: owners array contains zero");
+            require(ownersIndices[newOwners[i]] == 0, "transferOwnershipWithHowMany: owners array contains duplicates");
+            ownersIndices[newOwners[i]] = i + 1;
+        }
+        
+        emit OwnershipTransferred(owners, howManyOwnersDecide, newOwners, newHowManyOwnersDecide);
+        owners = newOwners;
+        howManyOwnersDecide = newHowManyOwnersDecide;
+        allOperations.length = 0;
+        ownersGeneration++;
+    }
+
+}
+
+
+
+
+
+interface DECTokenInterface{
+    
+    function DECAirdropSend( address, address, uint256 ) external;
+    function balanceOf(address) external returns( uint256 );
+    function DECAirdropInit(address, uint256) external;
+    function DECAirdropSendToNode(address, address, uint256) external;
+    
+}
+
+contract DECAirdrop is Multiownable {
+    
+    using SafeMath for uint256;
+    
+    uint256 public price = 100000000000000;
+    address public developmentAccount;
+    uint256 public timeOfSilence = 5 minutes;
+    bool public websiteSaleSign = false;
+    bool public investmentSign = false;
+    mapping( address => uint256 ) public nodeDeposit;
+    mapping ( uint256 => uint256 ) public balanceOfGroup;
+    mapping( address => bool ) public whitelist;
+    mapping( uint256 => address[] ) public poolAddresses;
+    mapping( uint256 => uint256[] ) public poolAmounts;
+    mapping( address => uint256 ) public pushedTokensTime;
+    mapping( address => uint256 ) public pushedTokensAmount;
+    mapping( address => bool ) public isPushed;
+    mapping( address => uint256 ) public nodeBlockedBalance;
+    mapping( address => uint256 ) public balanceOf;
+    uint256[] poolArray= [11,12,13,21,22,23,31,32,33,34,41,42,43,51,52];
+    
+    DECTokenInterface DECToken;
+    address DECTokenAddress;
+    
+    event GroupHistory(uint256 indexed group, address indexed to, uint256 value);
+    
+    /**
+    * @dev Set the initial value of groups
+    */
+    constructor() public {
+        balanceOfGroup[11] = 35740000000 ether;
+        balanceOfGroup[12] = 637000000 ether;
+        balanceOfGroup[13] = 15000000 ether;
+        
+        balanceOfGroup[21] = 35000000 ether;
+        balanceOfGroup[22] = 8500000 ether;
+        balanceOfGroup[23] = 5250000000 ether;
+        
+        balanceOfGroup[31] = 500000 ether;
+        balanceOfGroup[32] = 15000000 ether;
+        balanceOfGroup[33] = 16500000 ether;
+        balanceOfGroup[34] = 9000000 ether;
+        
+        balanceOfGroup[41] = 433000000 ether;
+        balanceOfGroup[42] = 34000000 ether;
+        balanceOfGroup[43] = 303000000 ether;
+        
+        balanceOfGroup[51] = 15000000 ether;
+        balanceOfGroup[52] = 112000000 ether;
+    } 
+    
+    /**
+    * @dev Link to DEC contract && initial total supply
+    * @param _address DEC contract address
+    */
+    function setDECToken(address _address) public onlyAnyOwner
+    {
+        DECToken = DECTokenInterface(_address);
+        DECTokenAddress = _address;
+        uint256 totalSupply = 0;
+        for (uint256 i = 0; i < poolArray.length; i++) {
+            totalSupply+= balanceOfGroup[poolArray[i]];
+        }
+        DECToken.DECAirdropInit( DECTokenAddress, totalSupply );
+    }
+    
+    /**
+    * @dev Set development wallet address
+    * @param _address development wallet address
+    */
+    function setDevelopmentAccount( address _address ) public onlyAnyOwner
+    {
+        developmentAccount = _address;
+    }
+    
+    /**
+    * @dev Set website sale sign to true
+    */
+    function setWebsiteSaleSign() public onlyManyOwners
+    {
+        websiteSaleSign = true;
+    }
+    
+    /**
+    * @dev Set investment sign to true
+    */
+    function setInvestmentSign( address[] _addresses, uint256[] _amounts, uint256 _pool ) public onlyManyOwners
+    {
+        _addresses;_amounts;_pool;
+        investmentSign = true;
+    }
+    
+    /**
+    * @dev Set DEC price
+    * @param _price dec price
+    */
+    function setPrice( uint256 _price ) public onlyAnyOwner
+    {
+        price = _price;
+    }
+
+    /**
+    * @dev Set pool amounts
+    * @param _addresses array of addresses
+    * @param _amounts array of amounts
+    * @param _pool pool number
+    */
+    function setPool( address[] _addresses, uint256[] _amounts, uint256 _pool ) public onlyAnyOwner
+    {
+        require( _addresses.length == _amounts.length );
+        
+        if( _pool == 12) {
+            require( investmentSign );
+            investmentSign = false;
+        }
+        
+        if( _pool == 13) {
+            require( websiteSaleSign );
+        }
+        
+        uint256 sum = 0;
+        
+        for (uint256 i = 0; i < _amounts.length; i++) {
+            sum = sum.add( _amounts[i] );
+        }
+        
+        require( sum <= balanceOfGroup[_pool] );
+        
+        poolAddresses[_pool] = _addresses;
+        poolAmounts[_pool] = _amounts;
+    }
+   
+    /**
+    * @dev Distribute tokens to pools
+    */
+    function Send() public onlyAnyOwner
+    {
+        for (uint256 i = 0; i < poolArray.length; i++) {
+            for (uint256 j = 0; j < poolAddresses[ poolArray[i] ].length; j++) {
+                
+                if( poolAmounts[poolArray[i]][j] > 0 ) {
+                    uint256 _amount = poolAmounts[poolArray[i]][j];
+                    poolAmounts[poolArray[i]][j] = 0;
+                    balanceOfGroup[poolArray[i]] = balanceOfGroup[poolArray[i]].sub( _amount );
+                    
+                    if( poolArray[i] == 31 ){
+                        nodeBlockedBalance[poolAddresses[poolArray[i]][j]] = nodeBlockedBalance[poolAddresses[poolArray[i]][j]].add( _amount );
+                        DECToken.DECAirdropSendToNode( DECTokenAddress, poolAddresses[poolArray[i]][j], _amount );
+                    } else {
+                        DECToken.DECAirdropSend( DECTokenAddress, poolAddresses[poolArray[i]][j], _amount );
+                    }
+                    emit GroupHistory(poolArray[i], poolAddresses[poolArray[i]][j], _amount );
+                }
+                
+            }
+        }
+    }
+    
+    /**
+    * @dev Add addresses to whitelist
+    * @param _addresses array of addresses
+    */
+    function insertToWhiteList( address[] _addresses ) public onlyAnyOwner
+    {
+        for (uint256 i = 0; i < _addresses.length; i++) {
+            whitelist[_addresses[i]] = true;
+        }
+    }
+    
+    /**
+    * @dev Remove addresses from whitelist
+    * @param _addresses array of addresses
+    */
+    function removeFromWhiteList( address[] _addresses ) public onlyAnyOwner
+    {
+        for (uint256 i = 0; i < _addresses.length; i++) {
+            whitelist[_addresses[i]] = false;
+        }
+    }
+    
+    /**
+    * @dev Find address in whitelist
+    * @param _address array of addresses
+    */
+    function inWhiteList( address _address ) public view returns( bool )
+    {
+        return whitelist[_address];
+    }
+    
+    /**
+    * @dev Purchase DEC
+    */
+    function buy () payable public
+    {
+        uint256 _amount = msg.value.div( price ) * 1 ether;
+        
+        require( whitelist[msg.sender] && websiteSaleSign && ( _amount <= balanceOfGroup[13] ) );
+        
+        
+        balanceOfGroup[13] = balanceOfGroup[13].sub( _amount );
+        
+        DECToken.DECAirdropSend( DECTokenAddress,  msg.sender, _amount );
+        
+        developmentAccount.transfer( msg.value );
+        
+    }
+    
+    /**
+    * @dev Set setTimeOfSilence 
+    * @param _timeOfSilence _time of silence
+    */
+    function setTimeOfSilence( uint256 _timeOfSilence ) public onlyAnyOwner
+    {
+        timeOfSilence = _timeOfSilence;
+    }
+    
+    /**
+    * @dev Send DEC for accept. Msg.sender only DEC token
+    */
+    function pushTokens( uint256 _amount, address _from ) public
+    {
+        
+        require( isPushed[_from] == false && DECToken.balanceOf(_from) >= _amount && msg.sender == DECTokenAddress );
+        
+        pushedTokensTime[_from] = now;
+        pushedTokensAmount[_from] = _amount;
+        isPushed[_from] = true;
+        
+        DECToken.DECAirdropSendToNode( _from, DECTokenAddress, _amount );
+ 
+    }
+    
+    /**
+    * @dev Pull DEC from DECAirdrop. Msg.sender only DEC token
+    */
+    function pullTokens( address _from ) public
+    {
+        require( isPushed[_from] && msg.sender == DECTokenAddress );
+        require( pushedTokensTime[_from] + timeOfSilence <= now  );
+        
+        DECToken.DECAirdropSend( DECTokenAddress, _from, pushedTokensAmount[_from] );
+        isPushed[_from] = false;
+        pushedTokensAmount[_from] = 0;
+    }
+    
+    /**
+    * @dev Accept tokens
+    * @param _address node address
+    */
+    function accept( address _address ) public onlyAnyOwner
+    {
+        require( pushedTokensAmount[_address] > 0  );
+        nodeDeposit[ _address ] = nodeDeposit[ _address ].add( pushedTokensAmount[_address] );
+        
+        if( nodeBlockedBalance[_address] >= pushedTokensAmount[_address] )
+            nodeBlockedBalance[_address] = nodeBlockedBalance[_address].sub( pushedTokensAmount[_address] ); 
+        
+        isPushed[_address] = false;
+        pushedTokensAmount[_address] = 0;
+    }
+    
+    /**
+    * @dev Send DEC from deposit wallet
+    * @param _address node address
+    * @param _amount  token amounts
+    */
+    function sendFromDeposit( address _address, uint256 _amount ) public onlyAnyOwner
+    {
+        require( nodeDeposit[ _address ] >= _amount );
+        
+        nodeDeposit[ _address ] = nodeDeposit[ _address ].sub( _amount );
+        
+        DECToken.DECAirdropSendToNode( DECTokenAddress, _address, _amount );
+    }
+     
+}
